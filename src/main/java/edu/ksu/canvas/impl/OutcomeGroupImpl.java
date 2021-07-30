@@ -28,6 +28,42 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
+	public Optional<OutcomeGroup> getRootOutcomeGroup() throws IOException {
+		LOG.debug("getting global root outcome group ");
+		String url = buildCanvasUrl("global/root_outcome_group", Collections.emptyMap());
+
+		Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+		if (response.getErrorHappened() || response.getResponseCode() != 200) {
+			return Optional.empty();
+		}
+		return responseParser.parseToObject(OutcomeGroup.class, response);
+	}
+
+	@Override
+	public Optional<OutcomeGroup> getRootOutcomeGroupInAccount(String accountId) throws IOException {
+		LOG.debug("getting root outcome group in account {}", accountId);
+		String url = buildCanvasUrl("accounts/" + accountId + "/root_outcome_group", Collections.emptyMap());
+
+		Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+		if (response.getErrorHappened() || response.getResponseCode() != 200) {
+			return Optional.empty();
+		}
+		return responseParser.parseToObject(OutcomeGroup.class, response);
+	}
+
+	@Override
+	public Optional<OutcomeGroup> getRootOutcomeGroupInCourse(String courseId) throws IOException {
+		LOG.debug("getting root outcome group in course {}", courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/root_outcome_group", Collections.emptyMap());
+
+		Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+		if (response.getErrorHappened() || response.getResponseCode() != 200) {
+			return Optional.empty();
+		}
+		return responseParser.parseToObject(OutcomeGroup.class, response);
+	}
+
+	@Override
 	public List<OutcomeGroup> getOutcomeGroupsInAccount(String accountId) throws IOException {
 		LOG.debug("Retrieving outcome groups for account {}", accountId);
 		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups", Collections.emptyMap());

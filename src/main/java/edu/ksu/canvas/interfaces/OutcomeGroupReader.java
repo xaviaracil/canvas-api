@@ -11,6 +11,36 @@ import java.util.Optional;
  * Made for the project canvas-api
  */
 public interface OutcomeGroupReader extends CanvasReader<OutcomeGroup, OutcomeGroupReader> {
+
+	/**
+	 * Retrieve the root outcome group.
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.redirect">Redirect to root outcome group for context</a>
+	 * in the Canvas docs for details.
+	 * @return The root outcome group from Canvas
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeGroup> getRootOutcomeGroup() throws IOException;
+
+	/**
+	 * Retrieve the root outcome group.
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.redirect">Redirect to root outcome group for context</a>
+	 * in the Canvas docs for details.
+	 * @param accountId The account to look for the root outcome group in.
+	 * @return The root outcome group from Canvas
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeGroup> getRootOutcomeGroupInAccount(String accountId) throws IOException;
+
+	/**
+	 * Retrieve the root outcome group.
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.redirect">Redirect to root outcome group for context</a>
+	 * in the Canvas docs for details.
+	 * @param courseId The course to look for the root outcome group in.
+	 * @return The root outcome group from Canvas
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeGroup> getRootOutcomeGroupInCourse(String courseId) throws IOException;
+
 	/**
 	 * Retrieve all outcome groups for account.
 	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.index">Get all outcome groups for context</a>
