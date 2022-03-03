@@ -16,7 +16,7 @@ public class OutcomeGroup extends BaseCanvasModel implements Serializable {
 
 	private long id;
 	private String url;
-	private String parentOutcomeGroup;
+	private OutcomeGroup parentOutcomeGroup;
 	private long contextId;
 	private String contextType;
 	private String title;
@@ -44,11 +44,11 @@ public class OutcomeGroup extends BaseCanvasModel implements Serializable {
 	}
 
 	@CanvasField(postKey = "parent_outcome_group")
-	public String getParentOutcomeGroup() {
+	public OutcomeGroup getParentOutcomeGroup() {
 		return parentOutcomeGroup;
 	}
 
-	public void setParentOutcomeGroup(String parentOutcomeGroup) {
+	public void setParentOutcomeGroup(OutcomeGroup parentOutcomeGroup) {
 		this.parentOutcomeGroup = parentOutcomeGroup;
 	}
 

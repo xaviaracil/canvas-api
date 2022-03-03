@@ -1,5 +1,6 @@
 package edu.ksu.canvas.interfaces;
 
+import edu.ksu.canvas.model.outcomes.Outcome;
 import edu.ksu.canvas.model.outcomes.OutcomeGroup;
 
 import java.io.IOException;
@@ -92,4 +93,6 @@ public interface OutcomeGroupReader extends CanvasReader<OutcomeGroup, OutcomeGr
 	 * @throws IOException When there is an error communicating with Canvas
 	 */
 	Optional<OutcomeGroup> getOutcomeGroupInCourse(String courseId, String id) throws IOException;
+
+	Optional<Outcome> getOutcome(String id) throws IOException;
 }
