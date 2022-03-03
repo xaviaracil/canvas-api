@@ -4,6 +4,10 @@ import com.google.gson.reflect.TypeToken;
 import edu.ksu.canvas.interfaces.RubricReader;
 import edu.ksu.canvas.interfaces.RubricWriter;
 import edu.ksu.canvas.model.assignment.Rubric;
+import edu.ksu.canvas.model.assignment.RubricWriterResponse;
+import edu.ksu.canvas.model.outcomes.OutcomeLink;
+import edu.ksu.canvas.model.rubric.RubricCreation;
+import edu.ksu.canvas.model.rubric.RubricCreationRequest;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
 import edu.ksu.canvas.oauth.OauthToken;
@@ -14,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +52,15 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
         return responseParser.parseToObject(Rubric.class, response);
     }
 
-    @Override
+	@Override
+	public Optional<RubricWriterResponse> createSingleRubricInCourse(String courseId, RubricCreationRequest rubric) throws IOException {
+		LOG.debug("creating rubric in course {}", courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/rubrics", Collections.emptyMap());
+		Response response = canvasMessenger.sendToCanvas(oauthToken, url, rubric.toPostMap(serializeNulls));
+		return responseParser.parseToObject(RubricWriterResponse.class, response);
+	}
+
+	@Override
     protected Type listType() {
         return new TypeToken<List<Rubric>>(){}.getType();
     }

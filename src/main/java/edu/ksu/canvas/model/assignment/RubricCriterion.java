@@ -1,11 +1,15 @@
 package edu.ksu.canvas.model.assignment;
 
+import edu.ksu.canvas.annotation.CanvasField;
+import edu.ksu.canvas.annotation.CanvasObject;
+import edu.ksu.canvas.interfaces.Hashable;
 import edu.ksu.canvas.model.BaseCanvasModel;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class RubricCriterion extends BaseCanvasModel implements Serializable {
+@CanvasObject(postKey = "criteria")
+public class RubricCriterion extends BaseCanvasModel implements Serializable, Hashable {
     private static final long serialVersionUID = 1L;
 
     private String id;
@@ -18,6 +22,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
     private Long learningOutcomeId;
     private List<RubricRating> ratings;
 
+		@CanvasField(postKey = "id", array = false)
     public String getId() {
         return id;
     }
@@ -26,6 +31,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.id = id;
     }
 
+		@CanvasField(postKey = "description", array = false)
     public String getDescription() {
         return description;
     }
@@ -34,6 +40,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.description = description;
     }
 
+		@CanvasField(postKey = "long_description", array = false)
     public String getLongDescription() {
         return longDescription;
     }
@@ -42,6 +49,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.longDescription = longDescription;
     }
 
+		@CanvasField(postKey = "points", array = false)
     public Double getPoints() {
         return points;
     }
@@ -50,6 +58,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.points = points;
     }
 
+		@CanvasField(postKey = "criterion_use_range", array = false)
     public Boolean getCriterionUseRange() {
         return criterionUseRange;
     }
@@ -58,6 +67,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.criterionUseRange = criterionUseRange;
     }
 
+		@CanvasField(postKey = "ignore_for_scoring", array = false)
     public Boolean getIgnoreForScoring() {
         return ignoreForScoring;
     }
@@ -66,6 +76,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.ignoreForScoring = ignoreForScoring;
     }
 
+		@CanvasField(postKey = "mastery_points", array = false)
     public Double getMasteryPoints() {
         return masteryPoints;
     }
@@ -74,6 +85,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.masteryPoints = masteryPoints;
     }
 
+		@CanvasField(postKey = "learning_outcome_id", array = false)
     public Long getLearningOutcomeId() {
         return learningOutcomeId;
     }
@@ -82,6 +94,7 @@ public class RubricCriterion extends BaseCanvasModel implements Serializable {
         this.learningOutcomeId = learningOutcomeId;
     }
 
+		@CanvasField(postKey = "ratings", array = false, hash = true)
     public List<RubricRating> getRatings() {
         return ratings;
     }

@@ -1,9 +1,12 @@
 package edu.ksu.canvas.model.assignment;
 
+import edu.ksu.canvas.annotation.CanvasField;
+import edu.ksu.canvas.annotation.CanvasObject;
 import edu.ksu.canvas.model.BaseCanvasModel;
 
 import java.io.Serializable;
 
+@CanvasObject(postKey = "rubric_association")
 public class RubricAssociation extends BaseCanvasModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -20,6 +23,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
     // although I suspect this is not correct so I am leaving it out for now.
     //private String summaryData;
 
+		@CanvasField(postKey = "id", array = false)
     public Long getId() {
         return id;
     }
@@ -28,6 +32,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.id = id;
     }
 
+		@CanvasField(postKey = "rubric_id", array = false)
     public Long getRubricId() {
         return rubricId;
     }
@@ -36,6 +41,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.rubricId = rubricId;
     }
 
+		@CanvasField(postKey = "association_id", array = false)
     public Long getAssociationId() {
         return associationId;
     }
@@ -44,6 +50,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.associationId = associationId;
     }
 
+		@CanvasField(postKey = "association_type", array = false)
     public String getAssociationType() {
         return associationType;
     }
@@ -52,6 +59,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.associationType = associationType;
     }
 
+		@CanvasField(postKey = "use_for_grading", array = false)
     public Boolean getUseForGrading() {
         return useForGrading;
     }
@@ -60,6 +68,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.useForGrading = useForGrading;
     }
 
+		@CanvasField(postKey = "purpose", array = false)
     public String getPurpose() {
         return purpose;
     }
@@ -68,6 +77,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.purpose = purpose;
     }
 
+		@CanvasField(postKey = "hide_score_total", array = false)
     public Boolean getHideScoreTotal() {
         return hideScoreTotal;
     }
@@ -76,6 +86,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.hideScoreTotal = hideScoreTotal;
     }
 
+		@CanvasField(postKey = "hide_points", array = false)
     public Boolean getHidePoints() {
         return hidePoints;
     }
@@ -84,6 +95,7 @@ public class RubricAssociation extends BaseCanvasModel implements Serializable {
         this.hidePoints = hidePoints;
     }
 
+		@CanvasField(postKey = "hide_outcome_results", array = false)
     public Boolean getHideOutcomeResults() {
         return hideOutcomeResults;
     }

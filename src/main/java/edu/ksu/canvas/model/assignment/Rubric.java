@@ -1,6 +1,7 @@
 package edu.ksu.canvas.model.assignment;
 
 import com.google.gson.annotations.SerializedName;
+import edu.ksu.canvas.annotation.CanvasField;
 import edu.ksu.canvas.annotation.CanvasObject;
 import edu.ksu.canvas.model.BaseCanvasModel;
 
@@ -27,6 +28,7 @@ public class Rubric extends BaseCanvasModel implements Serializable {
     private List<RubricAssessment> assessments;
     private List<RubricAssociation> associations;
 
+		@CanvasField(postKey = "id", array = false)
     public Long getId() {
         return id;
     }
@@ -59,6 +61,7 @@ public class Rubric extends BaseCanvasModel implements Serializable {
         this.pointsPossible = pointsPossible;
     }
 
+    @CanvasField(postKey = "title")
     public String getTitle() {
         return title;
     }
@@ -91,6 +94,7 @@ public class Rubric extends BaseCanvasModel implements Serializable {
         this.readOnly = readOnly;
     }
 
+		@CanvasField(postKey = "free_form_criterion_comments")
     public Boolean getFreeFormCriterionComments() {
         return freeFormCriterionComments;
     }
@@ -107,6 +111,7 @@ public class Rubric extends BaseCanvasModel implements Serializable {
         this.hideScoreTotal = hideScoreTotal;
     }
 
+		@CanvasField(postKey = "criteria", hash = true)
     public List<RubricCriterion> getCriteria() {
         return criteria;
     }
