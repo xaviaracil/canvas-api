@@ -19,6 +19,14 @@ public @interface CanvasField {
      */
     boolean array() default true;
 
+		/* Controls whether the key should be wrapped in a hash inside CanvasObject's postName
+		 * For example if the class's CanvasObject annotation contains the postKey value of 'course',
+		 * , the CanvasField has a postKey value of 'something' and the object has an id of 'id' then:
+		 * Setting hash to true will result in the postMap key be 'course[something][id]'
+		 * Setting hash to false will result in the postMap key to be 'something'
+		 */
+		boolean hash() default false;
+
     /*
         Used to override the key on the main Canvas Object. Leave empty unless necessary
      */
