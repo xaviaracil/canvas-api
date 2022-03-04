@@ -20,6 +20,8 @@ public class RubricCreationRequest extends BaseCanvasModel {
 	private String associationType;
 	private Boolean useForGrading;
 	private Boolean hideScoreTotal;
+	private Boolean hidePoints;
+	private Boolean hideOutcomeResults;
 	private String purpose;
 
 	@CanvasField(postKey = "rubric_association_id", array = false)
@@ -104,4 +106,21 @@ public class RubricCreationRequest extends BaseCanvasModel {
 		this.hideScoreTotal = hideScoreTotal;
 	}
 
+	@CanvasField(postKey = "hide_points", overrideObjectKey = "rubric_association")
+	public Boolean getHidePoints() {
+		return hidePoints;
+	}
+
+	public void setHidePoints(Boolean hidePoints) {
+		this.hidePoints = hidePoints;
+	}
+
+	@CanvasField(postKey = "hide_outcome_results", overrideObjectKey = "rubric_association")
+	public Boolean getHideOutcomeResults() {
+		return hideOutcomeResults;
+	}
+
+	public void setHideOutcomeResults(Boolean hideOutcomeResults) {
+		this.hideOutcomeResults = hideOutcomeResults;
+	}
 }
