@@ -5,7 +5,7 @@ import edu.ksu.canvas.interfaces.CanvasWriter;
 import edu.ksu.canvas.interfaces.ModuleReader;
 import edu.ksu.canvas.model.Module;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.ListModulesOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +17,8 @@ import java.util.List;
 public class ModuleImpl extends BaseImpl<Module, ModuleReader, CanvasWriter> implements ModuleReader {
     private static final Logger LOG = LoggerFactory.getLogger(ModuleImpl.class);
 
-    public ModuleImpl(final String canvasBaseUrl, final Integer apiVersion, final OauthToken oauthToken, final RestClient restClient, final int connectTimeout, final int readTimeout, final Integer paginationPageSize, final Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
+    public ModuleImpl(final String canvasBaseUrl, final Integer apiVersion, final AuthorizationToken authorizationToken, final RestClient restClient, final int connectTimeout, final int readTimeout, final Integer paginationPageSize, final Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
     }
 
     @Override

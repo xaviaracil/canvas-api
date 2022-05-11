@@ -1,17 +1,7 @@
 package edu.ksu.canvas.impl;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-
 import edu.ksu.canvas.interfaces.QuizSubmissionQuestionReader;
 import edu.ksu.canvas.interfaces.QuizSubmissionQuestionWriter;
 import edu.ksu.canvas.model.assignment.QuizAnswer;
@@ -20,7 +10,7 @@ import edu.ksu.canvas.model.wrapper.QuizSubmissionQuestionWrapper;
 import edu.ksu.canvas.model.wrapper.QuizSubmissionWrapper;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.AnswerQuizQuestionOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +23,9 @@ import java.util.List;
 public class QuizSubmissionQuestionImpl extends BaseImpl<QuizSubmissionQuestion, QuizSubmissionQuestionReader, QuizSubmissionQuestionWriter> implements QuizSubmissionQuestionReader, QuizSubmissionQuestionWriter {
     private static final Logger LOG = LoggerFactory.getLogger(QuizSubmissionQuestionImpl.class);
 
-    public QuizSubmissionQuestionImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                                      int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public QuizSubmissionQuestionImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+																			int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -52,7 +42,7 @@ public class QuizSubmissionQuestionImpl extends BaseImpl<QuizSubmissionQuestion,
         JsonParser parser = new JsonParser();
         JsonArray answerJson = (JsonArray) parser.parse(answerArrayJson); //handling escaped serialization
         requestBody.add("quiz_questions", answerJson);
-        Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, requestBody);
+        Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, requestBody);
         if(response.getErrorHappened() || response.getResponseCode() != 200) {
             LOG.error("Error answering questions. Returning null");
             LOG.debug(response.getContent());

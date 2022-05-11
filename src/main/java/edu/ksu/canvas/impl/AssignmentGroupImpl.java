@@ -6,11 +6,10 @@ import edu.ksu.canvas.interfaces.AssignmentGroupWriter;
 import edu.ksu.canvas.model.assignment.AssignmentGroup;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.DeleteAssignmentGroupOptions;
 import edu.ksu.canvas.requestOptions.GetAssignmentGroupOptions;
 import edu.ksu.canvas.requestOptions.ListAssignmentGroupOptions;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +26,16 @@ public class AssignmentGroupImpl extends BaseImpl<AssignmentGroup, AssignmentGro
      *
      * @param canvasBaseUrl      The base URL of your canvas instance
      * @param apiVersion         The version of the Canvas API (currently 1)
-     * @param oauthToken         OAuth token to use when executing API calls
+     * @param authorizationToken Auth token to use when executing API calls
      * @param restClient         a RestClient implementation to use when talking to Canvas
      * @param connectTimeout     Timeout in seconds to use when connecting
      * @param readTimeout        Timeout in seconds to use when waiting for data to come back from an open connection
      * @param paginationPageSize How many objects to request per page on paginated requests
      * @param serializeNulls     Whether or not to include null fields in the serialized JSON. Defaults to false if null
      */
-    public AssignmentGroupImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                               int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public AssignmentGroupImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+															 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -63,7 +62,7 @@ public class AssignmentGroupImpl extends BaseImpl<AssignmentGroup, AssignmentGro
         }
         LOG.debug("Creating new assignment group in course {}, group name: {}", courseId, assignmentGroup.getName());
         String url = buildCanvasUrl("courses/" + courseId + "/assignment_groups", Collections.emptyMap());
-        Response response = canvasMessenger.sendToCanvas(oauthToken, url, assignmentGroup.toPostMap(serializeNulls));
+        Response response = canvasMessenger.sendToCanvas(authorizationToken, url, assignmentGroup.toPostMap(serializeNulls));
         return responseParser.parseToObject(AssignmentGroup.class, response);
     }
 
@@ -74,7 +73,7 @@ public class AssignmentGroupImpl extends BaseImpl<AssignmentGroup, AssignmentGro
         }
         LOG.debug("Modifying assignment group {} in course {}", assignmentGroup.getId(), courseId);
         String url = buildCanvasUrl("courses/" + courseId + "/assignment_groups/" + assignmentGroup.getId(), Collections.emptyMap());
-        Response response = canvasMessenger.putToCanvas(oauthToken, url, assignmentGroup.toPostMap(serializeNulls));
+        Response response = canvasMessenger.putToCanvas(authorizationToken, url, assignmentGroup.toPostMap(serializeNulls));
         return responseParser.parseToObject(AssignmentGroup.class, response);
     }
 
@@ -82,7 +81,7 @@ public class AssignmentGroupImpl extends BaseImpl<AssignmentGroup, AssignmentGro
     public Optional<AssignmentGroup> deleteAssignmentGroup(DeleteAssignmentGroupOptions options) throws IOException {
         LOG.debug("Deleting assignment group {} from course", options.getAssignmentGroupId(), options.getCourseId());
         String url = buildCanvasUrl("courses/" + options.getCourseId() + "/assignment_groups/" + options.getAssignmentGroupId(), options.getOptionsMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, Collections.emptyMap());
         return responseParser.parseToObject(AssignmentGroup.class, response);
     }
 

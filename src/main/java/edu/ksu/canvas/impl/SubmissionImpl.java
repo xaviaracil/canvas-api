@@ -10,7 +10,7 @@ import edu.ksu.canvas.model.Progress;
 import edu.ksu.canvas.model.assignment.Submission;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.GetSubmissionsOptions;
 import edu.ksu.canvas.requestOptions.MultipleSubmissionsOptions;
 import org.apache.commons.lang3.StringUtils;
@@ -30,16 +30,16 @@ public class SubmissionImpl extends BaseImpl<Submission, SubmissionReader, Submi
      *
      * @param canvasBaseUrl      The base URL of your canvas instance
      * @param apiVersion         The version of the Canvas API (currently 1)
-     * @param oauthToken         OAuth token to use when executing API calls
+     * @param authorizationToken Auth token to use when executing API calls
      * @param restClient         a RestClient implementation to use when talking to Canvas
      * @param connectTimeout     Timeout in seconds to use when connecting
      * @param readTimeout        Timeout in seconds to use when waiting for data to come back from an open connection
      * @param paginationPageSize How many objects to request per page on paginated requests
      * @param serializeNulls     Whether or not to include null fields in the serialized JSON. Defaults to false if null
      */
-    public SubmissionImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                          int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public SubmissionImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+													int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -118,7 +118,7 @@ public class SubmissionImpl extends BaseImpl<Submission, SubmissionReader, Submi
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("grade_data", gson.toJsonTree(options.getStudentSubmissionOptionMap()));
 
-        Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, jsonObject);
+        Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, jsonObject);
 
         Progress progress = parseProgressResponse(response);
         LOG.debug("ProgressId from assignment section submission response: {}", progress.getId());

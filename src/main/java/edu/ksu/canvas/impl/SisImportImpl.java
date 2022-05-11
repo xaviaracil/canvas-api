@@ -6,7 +6,7 @@ import edu.ksu.canvas.interfaces.SisImportWriter;
 import edu.ksu.canvas.model.SisImport;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.CreateSisImportOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,9 @@ public class SisImportImpl extends BaseImpl<SisImport, SisImportReader, SisImpor
 
     private static final Logger LOG = LoggerFactory.getLogger(SisImportImpl.class);
 
-    public SisImportImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                      int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public SisImportImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+												 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -31,7 +31,7 @@ public class SisImportImpl extends BaseImpl<SisImport, SisImportReader, SisImpor
     public  Optional<SisImport> getSisImport(String accountId, Long id) throws IOException {
         LOG.debug("getting sis import");
         String url = buildCanvasUrl("accounts/" + accountId + "/sis_imports/" + id.toString(), Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(SisImport.class, response);
     }
 
@@ -39,7 +39,7 @@ public class SisImportImpl extends BaseImpl<SisImport, SisImportReader, SisImpor
     public Optional<SisImport> createSisImport(CreateSisImportOptions options) throws IOException {
         LOG.debug("creating sis import");
         String url = buildCanvasUrl("accounts/" + options.getAccountId() + "/sis_imports", Collections.emptyMap());
-        Response response = canvasMessenger.sendFileToCanvas(oauthToken, url, options.getOptionsMap(), CreateSisImportOptions.ATTACHMENT, options.getFilePath(), options.getInputStream());
+        Response response = canvasMessenger.sendFileToCanvas(authorizationToken, url, options.getOptionsMap(), CreateSisImportOptions.ATTACHMENT, options.getFilePath(), options.getInputStream());
         return responseParser.parseToObject(SisImport.class, response);
     }
 

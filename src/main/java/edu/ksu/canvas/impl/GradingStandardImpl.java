@@ -5,7 +5,7 @@ import edu.ksu.canvas.interfaces.GradingStandardReader;
 import edu.ksu.canvas.interfaces.GradingStandardWriter;
 import edu.ksu.canvas.model.GradingStandard;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +19,9 @@ public class GradingStandardImpl extends BaseImpl<GradingStandard, GradingStanda
 
     private static final Logger LOG = LoggerFactory.getLogger(GradingStandardImpl.class);
 
-    public GradingStandardImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                            int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public GradingStandardImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+															 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 

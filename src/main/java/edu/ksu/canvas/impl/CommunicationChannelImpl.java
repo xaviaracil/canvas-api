@@ -1,15 +1,13 @@
 package edu.ksu.canvas.impl;
 
 import com.google.gson.reflect.TypeToken;
-
 import edu.ksu.canvas.interfaces.CommunicationChannelReader;
 import edu.ksu.canvas.interfaces.CommunicationChannelWriter;
 import edu.ksu.canvas.model.CommunicationChannel;
-import edu.ksu.canvas.requestOptions.CreateCommunicationChannelOptions;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
-
+import edu.ksu.canvas.net.auth.AuthorizationToken;
+import edu.ksu.canvas.requestOptions.CreateCommunicationChannelOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +22,9 @@ import static java.util.Collections.emptyMap;
 public class CommunicationChannelImpl extends BaseImpl<CommunicationChannel, CommunicationChannelReader, CommunicationChannelWriter> implements CommunicationChannelReader, CommunicationChannelWriter {
     private static final Logger LOG = LoggerFactory.getLogger(CommunicationChannelImpl.class);
 
-    public CommunicationChannelImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                     int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public CommunicationChannelImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+																		int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -46,7 +44,7 @@ public class CommunicationChannelImpl extends BaseImpl<CommunicationChannel, Com
         }
 
         String url = buildCanvasUrl(String.format("users/%s/communication_channels", options.getUserId()), emptyMap());
-        Response response = canvasMessenger.sendToCanvas(oauthToken, url, options.getOptionsMap());
+        Response response = canvasMessenger.sendToCanvas(authorizationToken, url, options.getOptionsMap());
         return responseParser.parseToObject(CommunicationChannel.class, response);
     }
 
@@ -58,7 +56,7 @@ public class CommunicationChannelImpl extends BaseImpl<CommunicationChannel, Com
         }
 
         String url = buildCanvasUrl(String.format("users/%s/communication_channels/%s", cc.getUserId(), cc.getId()), emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, emptyMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, emptyMap());
         return responseParser.parseToObject(CommunicationChannel.class, response);
     }
 

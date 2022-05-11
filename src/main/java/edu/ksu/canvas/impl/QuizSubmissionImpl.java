@@ -1,7 +1,6 @@
 package edu.ksu.canvas.impl;
 
 import com.google.gson.reflect.TypeToken;
-
 import edu.ksu.canvas.interfaces.QuizSubmissionReader;
 import edu.ksu.canvas.interfaces.QuizSubmissionWriter;
 import edu.ksu.canvas.model.assignment.QuizSubmission;
@@ -9,7 +8,7 @@ import edu.ksu.canvas.model.assignment.QuizSubmissionResponse;
 import edu.ksu.canvas.model.wrapper.QuizSubmissionWrapper;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.CompleteQuizSubmissionOptions;
 import edu.ksu.canvas.requestOptions.GetQuizSubmissionsOptions;
 import edu.ksu.canvas.requestOptions.StartQuizSubmissionOptions;
@@ -25,9 +24,9 @@ import java.util.Optional;
 public class QuizSubmissionImpl extends BaseImpl<QuizSubmission, QuizSubmissionReader, QuizSubmissionWriter> implements QuizSubmissionReader, QuizSubmissionWriter {
     private static final Logger LOG = LoggerFactory.getLogger(QuizSubmissionImpl.class);
 
-     public QuizSubmissionImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                               int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-         super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+     public QuizSubmissionImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+															 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+         super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                  paginationPageSize, serializeNulls);
      }
 
@@ -39,7 +38,7 @@ public class QuizSubmissionImpl extends BaseImpl<QuizSubmission, QuizSubmissionR
     @Override
     public QuizSubmissionResponse getQuizSubmissions(final GetQuizSubmissionsOptions options) throws IOException {
         final String url = buildCanvasUrl("courses/" + options.getCourseId() + "/quizzes/" + options.getQuizId() + "/submissions", options.getOptionsMap());
-        final List<Response> responses = canvasMessenger.getFromCanvas(oauthToken, url);
+        final List<Response> responses = canvasMessenger.getFromCanvas(authorizationToken, url);
         final QuizSubmissionWrapper wrapper = parseQuizSubmissionResponses(responses);
         return new QuizSubmissionResponse(wrapper.getQuizSubmissions(), wrapper.getUsers(), wrapper.getQuizzes());
     }
@@ -47,7 +46,7 @@ public class QuizSubmissionImpl extends BaseImpl<QuizSubmission, QuizSubmissionR
     @Override
     public Optional<QuizSubmission> startQuizSubmission(StartQuizSubmissionOptions options) throws IOException {
         String url = buildCanvasUrl("courses/" + options.getCourseId() + "/quizzes/" + options.getQuizId() + "/submissions", options.getOptionsMap());
-        Response response = canvasMessenger.sendToCanvas(oauthToken, url, Collections.emptyMap());
+        Response response = canvasMessenger.sendToCanvas(authorizationToken, url, Collections.emptyMap());
         return Optional.of(parseQuizSubmissionResponse(response).getQuizSubmissions().get(0));
     }
 
@@ -56,7 +55,7 @@ public class QuizSubmissionImpl extends BaseImpl<QuizSubmission, QuizSubmissionR
         LOG.debug("completing quiz submission for user/course/quiz: {}/{}/{}", masqueradeAs, options.getCourseId(), options.getQuizId());
         String url = buildCanvasUrl("courses/" + options.getCourseId() + "/quizzes/" + options.getQuizId() +
                 "/submissions/" + options.getSubmissionId() + "/complete", options.getOptionsMap());
-        Response response = canvasMessenger.sendToCanvas(oauthToken, url, Collections.emptyMap());
+        Response response = canvasMessenger.sendToCanvas(authorizationToken, url, Collections.emptyMap());
         //This call comes back from Canvas as an object containing a list of quiz submissions.
         //No clue why it doesn't just return a raw quiz submission.
         return Optional.of(parseQuizSubmissionResponse(response).getQuizSubmissions().get(0));

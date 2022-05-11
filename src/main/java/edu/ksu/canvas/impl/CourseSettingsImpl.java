@@ -1,13 +1,12 @@
 package edu.ksu.canvas.impl;
 
 import com.google.gson.reflect.TypeToken;
-import edu.ksu.canvas.interfaces.CourseReader;
 import edu.ksu.canvas.interfaces.CourseSettingsReader;
 import edu.ksu.canvas.interfaces.CourseSettingsWriter;
 import edu.ksu.canvas.model.CourseSettings;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +19,9 @@ import java.util.Optional;
 public class CourseSettingsImpl extends BaseImpl<CourseSettings, CourseSettingsReader, CourseSettingsWriter> implements CourseSettingsReader, CourseSettingsWriter {
     private static final Logger LOG = LoggerFactory.getLogger(CourseSettingsImpl.class);
 
-    public CourseSettingsImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                      int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public CourseSettingsImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+															int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -30,7 +29,7 @@ public class CourseSettingsImpl extends BaseImpl<CourseSettings, CourseSettingsR
     public Optional<CourseSettings> getCourseSettings(String courseId) throws IOException {
         LOG.debug("getting course settings for {}", courseId);
         String url = buildCanvasUrl(String.format("courses/%s/settings", courseId), Collections.emptyMap());
-        Response response =  canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response =  canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(CourseSettings.class, response);
     }
 
@@ -38,7 +37,7 @@ public class CourseSettingsImpl extends BaseImpl<CourseSettings, CourseSettingsR
     public Optional<CourseSettings> updateCourseSettings(String courseId, CourseSettings settings) throws IOException {
         LOG.debug("updating course settings for {}", courseId);
         String url = buildCanvasUrl(String.format("courses/%s/settings", courseId), Collections.emptyMap());
-        Response response = canvasMessenger.putToCanvas(oauthToken, url, settings.toPostMap(serializeNulls));
+        Response response = canvasMessenger.putToCanvas(authorizationToken, url, settings.toPostMap(serializeNulls));
         return responseParser.parseToObject(CourseSettings.class, response);
     }
 

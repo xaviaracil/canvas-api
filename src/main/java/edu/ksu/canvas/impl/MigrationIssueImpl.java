@@ -6,7 +6,7 @@ import edu.ksu.canvas.interfaces.MigrationIssueReader;
 import edu.ksu.canvas.model.MigrationIssue;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +20,9 @@ public class MigrationIssueImpl extends BaseImpl<MigrationIssue, MigrationIssueR
 
     private static final Logger LOG = LoggerFactory.getLogger(MigrationIssueImpl.class);
 
-    public MigrationIssueImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                      int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public MigrationIssueImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+															int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -37,7 +37,7 @@ public class MigrationIssueImpl extends BaseImpl<MigrationIssue, MigrationIssueR
     public Optional<MigrationIssue> getCourseMigrationIssue(String courseId, Long migrationId, Long issueId) throws IOException {
         LOG.debug("getting the migration issue {} for content migration {} in course {}", issueId, migrationId, courseId);
         String url = buildCanvasUrl("courses/" + courseId + "/content_migrations/" + migrationId.toString() + "/migration_issues/" + issueId.toString(), Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(MigrationIssue.class, response);
     }
 
@@ -52,7 +52,7 @@ public class MigrationIssueImpl extends BaseImpl<MigrationIssue, MigrationIssueR
     public Optional<MigrationIssue> getUserMigrationIssue(String userId, Long migrationId, Long issueId) throws IOException {
         LOG.debug("getting migration issue {} for content migration {} for user {}", issueId, migrationId, userId);
         String url = buildCanvasUrl("users/" + userId + "/content_migrations/" + migrationId.toString() + "/migration_issues/" + issueId.toString(), Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(MigrationIssue.class, response);
     }
 
@@ -67,7 +67,7 @@ public class MigrationIssueImpl extends BaseImpl<MigrationIssue, MigrationIssueR
     public Optional<MigrationIssue> getGroupMigrationIssue(String groupId, Long migrationId, Long issueId) throws IOException {
         LOG.debug("getting migration issue {} for content migration {} for the group {}", issueId, migrationId, groupId);
         String url = buildCanvasUrl("groups/" + groupId + "/content_migrations/" + migrationId.toString() + "/migration_issues/" + issueId.toString(), Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(MigrationIssue.class, response);
     }
 
@@ -82,7 +82,7 @@ public class MigrationIssueImpl extends BaseImpl<MigrationIssue, MigrationIssueR
     public Optional<MigrationIssue> getAccountMigrationIssue(String accountId, Long migrationId, Long issueId) throws IOException {
         LOG.debug("getting migration issue {} for content migration {} for the account {}", issueId, migrationId, accountId);
         String url = buildCanvasUrl("accounts/" + accountId + "/content_migrations/" + migrationId.toString() + "/migration_issues/" + issueId.toString(), Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(MigrationIssue.class, response);
     }
 

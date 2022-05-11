@@ -6,9 +6,8 @@ import edu.ksu.canvas.interfaces.QuizQuestionWriter;
 import edu.ksu.canvas.model.assignment.QuizQuestion;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.GetQuizQuestionsOptions;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +19,9 @@ import java.util.List;
 public class QuizQuestionImpl extends BaseImpl<QuizQuestion, QuizQuestionReader, QuizQuestionWriter> implements QuizQuestionReader, QuizQuestionWriter {
     private static final Logger LOG = LoggerFactory.getLogger(QuizQuestionImpl.class);
 
-    public QuizQuestionImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                            int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public QuizQuestionImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+														int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -38,7 +37,7 @@ public class QuizQuestionImpl extends BaseImpl<QuizQuestion, QuizQuestionReader,
     public boolean deleteQuizQuestion(String courseId, Long quizId, Long questionId) throws IOException {
         LOG.debug("Deleting quiz question in course {}, quiz {}, question {}", courseId, quizId, questionId);
         String url = buildCanvasUrl("courses/" + courseId + "/quizzes/" + quizId + "/questions/" + questionId, Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, Collections.emptyMap());
         int responseCode = response.getResponseCode();
         if (responseCode == 204) {
             return true;

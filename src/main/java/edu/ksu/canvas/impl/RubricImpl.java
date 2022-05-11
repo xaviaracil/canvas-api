@@ -5,12 +5,10 @@ import edu.ksu.canvas.interfaces.RubricReader;
 import edu.ksu.canvas.interfaces.RubricWriter;
 import edu.ksu.canvas.model.assignment.Rubric;
 import edu.ksu.canvas.model.assignment.RubricWriterResponse;
-import edu.ksu.canvas.model.outcomes.OutcomeLink;
-import edu.ksu.canvas.model.rubric.RubricCreation;
 import edu.ksu.canvas.model.rubric.RubricCreationRequest;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.GetRubricOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,9 +23,9 @@ import java.util.Optional;
 public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> implements RubricReader, RubricWriter{
     private static final Logger LOG = LoggerFactory.getLogger(RubricImpl.class);
 
-    public RubricImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                      int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
+    public RubricImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+											int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
         }
         LOG.debug("Retrieving rubric {} in account {}", options.getRubricId(), options.getCanvasId());
         String url = buildCanvasUrl(String.format("accounts/%s/rubrics/%d", options.getCanvasId(), options.getRubricId()), options.getOptionsMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(Rubric.class, response);
     }
 
@@ -48,7 +46,7 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
         }
         LOG.debug("Retrieving rubric {} in course {}", options.getRubricId(), options.getCanvasId());
         String url = buildCanvasUrl(String.format("courses/%s/rubrics/%d", options.getCanvasId(), options.getRubricId()), options.getOptionsMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(Rubric.class, response);
     }
 
@@ -56,7 +54,7 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
 	public Optional<RubricWriterResponse> createSingleRubricInCourse(String courseId, RubricCreationRequest rubric) throws IOException {
 		LOG.debug("creating rubric in course {}", courseId);
 		String url = buildCanvasUrl("courses/" + courseId + "/rubrics", Collections.emptyMap());
-		Response response = canvasMessenger.sendToCanvas(oauthToken, url, rubric.toPostMap(serializeNulls));
+		Response response = canvasMessenger.sendToCanvas(authorizationToken, url, rubric.toPostMap(serializeNulls));
 		return responseParser.parseToObject(RubricWriterResponse.class, response);
 	}
 

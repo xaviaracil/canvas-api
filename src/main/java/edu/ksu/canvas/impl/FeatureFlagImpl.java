@@ -6,7 +6,7 @@ import edu.ksu.canvas.interfaces.FeatureFlagWriter;
 import edu.ksu.canvas.model.FeatureFlag;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -22,15 +22,15 @@ public class FeatureFlagImpl extends BaseImpl<FeatureFlag, FeatureFlagReader, Fe
      *
      * @param canvasBaseUrl      The base URL of your canvas instance
      * @param apiVersion         The version of the Canvas API (currently 1)
-     * @param oauthToken         OAuth token to use when executing API calls
+     * @param authorizationToken Auth token to use when executing API calls
      * @param restClient         a RestClient implementation to use when talking to Canvas
      * @param connectTimeout     Timeout in seconds to use when connecting
      * @param readTimeout        Timeout in seconds to use when waiting for data to come back from an open connection
      * @param paginationPageSize How many objects to request per page on paginated requests
      * @param serializeNulls     Whether or not to include null fields in the serialized JSON. Defaults to false if null
      */
-    public FeatureFlagImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient, int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
+    public FeatureFlagImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient, int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FeatureFlagImpl extends BaseImpl<FeatureFlag, FeatureFlagReader, Fe
 
     private Optional<FeatureFlag> updateFeatureFlag(String url, FeatureFlag.State state) throws IOException {
         Map<String, List<String>> params = Collections.singletonMap("state", Collections.singletonList(state.name()));
-        return getFeatureFlag(canvasMessenger.putToCanvas(oauthToken, url, params));
+        return getFeatureFlag(canvasMessenger.putToCanvas(authorizationToken, url, params));
     }
 
     @Override
@@ -69,19 +69,19 @@ public class FeatureFlagImpl extends BaseImpl<FeatureFlag, FeatureFlagReader, Fe
     @Override
     public Optional<FeatureFlag> getCourseFeatureFlag(String courseId, String feature) throws IOException {
         String url = buildCanvasUrl("courses/"+ courseId+ "/features/flags/"+ feature, Collections.emptyMap());
-        return getFeatureFlag(canvasMessenger.getSingleResponseFromCanvas(oauthToken, url));
+        return getFeatureFlag(canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url));
     }
 
     @Override
     public Optional<FeatureFlag> getAccountFeatureFlag(String accountId, String feature) throws IOException {
         String url = buildCanvasUrl("accounts/"+ accountId+ "/features/flags/"+ feature, Collections.emptyMap());
-        return getFeatureFlag(canvasMessenger.getSingleResponseFromCanvas(oauthToken, url));
+        return getFeatureFlag(canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url));
     }
 
     @Override
     public Optional<FeatureFlag> getUserFeatureFlag(String userId, String feature) throws IOException {
         String url = buildCanvasUrl("users/"+ userId+ "/features/flags/"+ feature, Collections.emptyMap());
-        return getFeatureFlag(canvasMessenger.getSingleResponseFromCanvas(oauthToken, url));
+        return getFeatureFlag(canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url));
     }
 
     private Optional<FeatureFlag> getFeatureFlag(Response singleResponseFromCanvas) {

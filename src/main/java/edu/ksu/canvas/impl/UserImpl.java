@@ -8,11 +8,10 @@ import edu.ksu.canvas.interfaces.UserWriter;
 import edu.ksu.canvas.model.User;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.CreateUserOptions;
 import edu.ksu.canvas.requestOptions.GetUsersInAccountOptions;
 import edu.ksu.canvas.requestOptions.GetUsersInCourseOptions;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +25,9 @@ import java.util.Optional;
 public class UserImpl extends BaseImpl<User, UserReader, UserWriter> implements UserReader, UserWriter{
     private static final Logger LOG = LoggerFactory.getLogger(UserImpl.class);
 
-    public UserImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                    int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public UserImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+										int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -43,7 +42,7 @@ public class UserImpl extends BaseImpl<User, UserReader, UserWriter> implements 
         LOG.debug("create URl for user creation : {}", createdUrl);
         Map<String, List<String>> parameterMap = options.getOptionsMap();
         parameterMap.putAll(user.toPostMap(serializeNulls));
-        Response response = canvasMessenger.sendToCanvas(oauthToken, createdUrl, parameterMap);
+        Response response = canvasMessenger.sendToCanvas(authorizationToken, createdUrl, parameterMap);
         if (response.getErrorHappened() || (response.getResponseCode() != 200)) {
             LOG.debug("Failed to create user, error message: {}", response);
             return Optional.empty();
@@ -63,7 +62,7 @@ public class UserImpl extends BaseImpl<User, UserReader, UserWriter> implements 
         //object, even for an admin user. I suspect some field within the User object can't be updated and instead of
         //ignoring it like most calls, the user call throws a permission error. So I had to fall back to sending a form POST
         //since it only serializes fields with a @CanvasField annotation
-        Response response = canvasMessenger.putToCanvas(oauthToken, url, user.toPostMap(serializeNulls));
+        Response response = canvasMessenger.putToCanvas(authorizationToken, url, user.toPostMap(serializeNulls));
         return responseParser.parseToObject(User.class, response);
     }
 
@@ -79,7 +78,7 @@ public class UserImpl extends BaseImpl<User, UserReader, UserWriter> implements 
     public Optional<User> showUserDetails(String userIdentifier) throws IOException {
         LOG.debug("Retrieving details for user {}", userIdentifier);
         String url = buildCanvasUrl("users/" + userIdentifier, Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(User.class, response);
     }
 

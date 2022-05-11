@@ -4,6 +4,7 @@ import edu.ksu.canvas.impl.*;
 import edu.ksu.canvas.interfaces.*;
 import edu.ksu.canvas.net.RestClient;
 import edu.ksu.canvas.net.RefreshingRestClient;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.oauth.OauthToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,12 +62,12 @@ public class CanvasApiFactory {
     /**
      * Get a reader implementation class to perform API calls with.
      * @param type Interface type you wish to get an implementation for
-     * @param oauthToken An OAuth token to use for authentication when making API calls
+     * @param authorizationToken An Auth token to use for authentication when making API calls
      * @param <T> The reader type to request an instance of
      * @return A reader implementation class
      */
-    public <T extends CanvasReader> T getReader(Class<T> type, OauthToken oauthToken) {
-        return getReader(type, oauthToken, null);
+    public <T extends CanvasReader> T getReader(Class<T> type, AuthorizationToken authorizationToken) {
+        return getReader(type, authorizationToken, null);
     }
 
     /**
@@ -76,12 +77,12 @@ public class CanvasApiFactory {
      * There is an explicit maximum page size on the server side which could change. The default page size
      * is 10 which can be limiting when, for example, trying to get all users in a 800 person course.
      * @param type Interface type you wish to get an implementation for
-     * @param oauthToken An OAuth token to use for authentication when making API calls
+     * @param authorizationToken An Auth token to use for authentication when making API calls
      * @param paginationPageSize Requested pagination page size
      * @param <T> The reader type to request an instance of
      * @return An instance of the requested reader class
      */
-    public <T extends CanvasReader> T getReader(Class<T> type, OauthToken oauthToken, Integer paginationPageSize) {
+    public <T extends CanvasReader> T getReader(Class<T> type, AuthorizationToken authorizationToken, Integer paginationPageSize) {
         LOG.debug("Factory call to instantiate reader class: {}", type.getName());
         RestClient restClient = new RefreshingRestClient();
 
@@ -95,8 +96,8 @@ public class CanvasApiFactory {
         LOG.debug("got class: {}", concreteClass);
         try {
             Constructor<T> constructor = concreteClass.getConstructor(String.class, Integer.class,
-                    OauthToken.class, RestClient.class, Integer.TYPE, Integer.TYPE, Integer.class, Boolean.class);
-            return constructor.newInstance(canvasBaseUrl, CANVAS_API_VERSION, oauthToken, restClient,
+                    AuthorizationToken.class, RestClient.class, Integer.TYPE, Integer.TYPE, Integer.class, Boolean.class);
+            return constructor.newInstance(canvasBaseUrl, CANVAS_API_VERSION, authorizationToken, restClient,
                     connectTimeout, readTimeout, paginationPageSize, false);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
             throw new UnsupportedOperationException("Unknown error instantiating the concrete API class: " + type.getName(), e);
@@ -119,12 +120,12 @@ public class CanvasApiFactory {
      * If the serializeNulls parameter is set to true, this writer will serialize null fields in the JSON being
      * sent to Canvas. This is required if you want to explicitly blank out a value that is currently set to something.
      * @param type Interface type you wish to get an implementation for
-     * @param oauthToken An OAuth token to use for authentication when making API calls
+     * @param authorizationToken An Auth token to use for authentication when making API calls
      * @param serializeNulls Whether or not to include null fields in the serialized JSON. Defaults to false if null
      * @param <T> A writer implementation
      * @return An instantiated instance of the requested writer type
      */
-    public <T extends CanvasWriter> T getWriter(Class<T> type, OauthToken oauthToken, Boolean serializeNulls) {
+    public <T extends CanvasWriter> T getWriter(Class<T> type, AuthorizationToken authorizationToken, Boolean serializeNulls) {
         LOG.debug("Factory call to instantiate writer class: {}", type.getName());
         RestClient restClient = new RefreshingRestClient();
 
@@ -137,9 +138,9 @@ public class CanvasApiFactory {
 
         LOG.debug("got writer class: {}", concreteClass);
         try {
-            Constructor<T> constructor = concreteClass.getConstructor(String.class, Integer.class, OauthToken.class,
+            Constructor<T> constructor = concreteClass.getConstructor(String.class, Integer.class, AuthorizationToken.class,
                     RestClient.class, Integer.TYPE, Integer.TYPE, Integer.class, Boolean.class);
-            return constructor.newInstance(canvasBaseUrl, CANVAS_API_VERSION, oauthToken, restClient,
+            return constructor.newInstance(canvasBaseUrl, CANVAS_API_VERSION, authorizationToken, restClient,
                     connectTimeout, readTimeout, null, serializeNulls);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
             throw new UnsupportedOperationException("Unknown error instantiating the concrete API class: " + type.getName(), e);

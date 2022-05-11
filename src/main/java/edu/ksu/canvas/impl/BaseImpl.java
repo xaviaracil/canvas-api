@@ -10,7 +10,7 @@ import edu.ksu.canvas.interfaces.CanvasWriter;
 import edu.ksu.canvas.interfaces.ResponseParser;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.util.CanvasURLBuilder;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ public abstract class BaseImpl<T, READERTYPE extends CanvasReader, WRITERTYPE ex
 
     protected String canvasBaseUrl;
     protected Integer apiVersion;
-    protected OauthToken oauthToken;
+    protected AuthorizationToken authorizationToken;
     protected ResponseParser responseParser;
     protected CanvasMessenger canvasMessenger;
     protected Consumer<List<T>> responseCallback;
@@ -46,18 +46,18 @@ public abstract class BaseImpl<T, READERTYPE extends CanvasReader, WRITERTYPE ex
      * Construct a new CanvasApi class with an OAuth token
      * @param canvasBaseUrl The base URL of your canvas instance
      * @param apiVersion The version of the Canvas API (currently 1)
-     * @param oauthToken OAuth token to use when executing API calls
+     * @param authorizationToken Auth token to use when executing API calls
      * @param restClient a RestClient implementation to use when talking to Canvas
      * @param connectTimeout Timeout in seconds to use when connecting
      * @param readTimeout Timeout in seconds to use when waiting for data to come back from an open connection
      * @param paginationPageSize How many objects to request per page on paginated requests
      * @param serializeNulls Whether or not to include null fields in the serialized JSON. Defaults to false if null
      */
-    public BaseImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                    int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+    public BaseImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+										int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
         this.canvasBaseUrl = canvasBaseUrl;
         this.apiVersion = apiVersion;
-        this.oauthToken = oauthToken;
+        this.authorizationToken = authorizationToken;
         this.paginationPageSize = paginationPageSize;
         this.serializeNulls = BooleanUtils.isTrue(serializeNulls);
         responseParser = new GsonResponseParser();
@@ -65,7 +65,7 @@ public abstract class BaseImpl<T, READERTYPE extends CanvasReader, WRITERTYPE ex
     }
 
     protected Optional<T> getFromCanvas(String url) throws IOException {
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         if (response.getErrorHappened() || response.getResponseCode() != 200) {
             LOG.warn("Error {} on GET from url {}", response.getResponseCode(), url);
             throw new IOException("Error accessing url " + url);
@@ -78,7 +78,7 @@ public abstract class BaseImpl<T, READERTYPE extends CanvasReader, WRITERTYPE ex
         if (responseCallback != null) {
             consumer = response -> responseCallback.accept(responseParser.parseToList(listType(), response));
         }
-        List<Response> responses = canvasMessenger.getFromCanvas(oauthToken, url, consumer);
+        List<Response> responses = canvasMessenger.getFromCanvas(authorizationToken, url, consumer);
         responseCallback = null;
         return parseListOfResponses(responses);
     }

@@ -8,7 +8,7 @@ import edu.ksu.canvas.model.EnrollmentTerm;
 import edu.ksu.canvas.model.wrapper.EnrollmentTermWrapper;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.GetEnrollmentTermOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 public class EnrollmentTermImpl extends BaseImpl<EnrollmentTerm, EnrollmentTermReader, EnrollmentTermWriter> implements EnrollmentTermReader, EnrollmentTermWriter {
     private static final Logger LOG = LoggerFactory.getLogger(EnrollmentTermImpl.class);
 
-    public EnrollmentTermImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                              int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public EnrollmentTermImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+															int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -34,7 +34,7 @@ public class EnrollmentTermImpl extends BaseImpl<EnrollmentTerm, EnrollmentTermR
     public List<EnrollmentTerm> getEnrollmentTerms(GetEnrollmentTermOptions options) throws IOException {
         LOG.debug("getting enrollment term with account id {}", options.getAccountId());
         String url = buildCanvasUrl("accounts/" + options.getAccountId() + "/terms/" , options.getOptionsMap());
-        List<Response> response = canvasMessenger.getFromCanvas(oauthToken, url);
+        List<Response> response = canvasMessenger.getFromCanvas(authorizationToken, url);
         return parseEnrollmentTermList(response);
     }
 
@@ -42,7 +42,7 @@ public class EnrollmentTermImpl extends BaseImpl<EnrollmentTerm, EnrollmentTermR
     public Optional<EnrollmentTerm> getEnrollmentTerm(String accountId, String termId) throws IOException {
         LOG.debug("getting enrollment term with account id {}", accountId);
         String url = buildCanvasUrl("accounts/" + accountId + "/terms/" +termId, Collections.emptyMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return Optional.of(GsonResponseParser.getDefaultGsonParser(serializeNulls).fromJson(response.getContent(), EnrollmentTerm.class));
     }
 

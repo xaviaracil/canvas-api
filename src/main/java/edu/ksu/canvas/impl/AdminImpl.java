@@ -1,13 +1,12 @@
 package edu.ksu.canvas.impl;
 
 import com.google.gson.reflect.TypeToken;
-
-import edu.ksu.canvas.interfaces.*;
+import edu.ksu.canvas.interfaces.AdminReader;
+import edu.ksu.canvas.interfaces.AdminWriter;
 import edu.ksu.canvas.model.AccountAdmin;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.ListAccountAdminsOptions;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +17,9 @@ import java.util.List;
 public class AdminImpl extends BaseImpl<AccountAdmin, AdminReader, AdminWriter> implements AdminReader, AdminWriter {
     private static final Logger LOG = LoggerFactory.getLogger(AdminImpl.class);
 
-    public AdminImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                     int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public AdminImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+										 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 

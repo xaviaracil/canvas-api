@@ -10,6 +10,7 @@ import edu.ksu.canvas.model.status.Conclude;
 import edu.ksu.canvas.model.status.Delete;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.oauth.OauthToken;
 import edu.ksu.canvas.requestOptions.*;
 import org.apache.commons.lang3.StringUtils;
@@ -18,20 +19,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> implements CourseReader, CourseWriter {
     private static final Logger LOG = LoggerFactory.getLogger(CourseImpl.class);
 
-    public CourseImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                      int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public CourseImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+											int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -60,18 +56,18 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
         }
         String url = buildCanvasUrl(path + options.getCourseId(), options.getOptionsMap());
 
-        return retrieveCourseFromCanvas(oauthToken, url);
+        return retrieveCourseFromCanvas(authorizationToken, url);
     }
 
     @Override
     public Optional<Course> getSingleCourse(String accountId, GetSingleCourseOptions options) throws IOException {
         LOG.debug("getting course {} in account {}", options.getCourseId(), accountId);
         String url = buildCanvasUrl("accounts/"+ accountId+ "/courses/"+ options.getCourseId(), options.getOptionsMap());
-        return retrieveCourseFromCanvas(oauthToken, url);
+        return retrieveCourseFromCanvas(authorizationToken, url);
     }
 
-    private Optional<Course> retrieveCourseFromCanvas(OauthToken oauthToken, String url) throws IOException {
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+    private Optional<Course> retrieveCourseFromCanvas(AuthorizationToken authorizationToken, String url) throws IOException {
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         if (response.getErrorHappened() || response.getResponseCode() != 200) {
             return Optional.empty();
         }
@@ -82,7 +78,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
     public Optional<Course> createCourse(String accountId, Course course) throws IOException {
         LOG.debug("creating course in account {}", accountId);
         String url = buildCanvasUrl("accounts/" + accountId + "/courses", Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, course.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, course.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Course.class, response);
     }
 
@@ -90,7 +86,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
     public Optional<Course> updateCourse(Course course) throws IOException {
         LOG.debug("updating course{}", course.getId());
         String url = buildCanvasUrl("courses/" + course.getId(), Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, course.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, course.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Course.class, response);
     }
 
@@ -99,7 +95,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
         LOG.debug("updating course {}", id);
         // TODO At some point we need to sort this out better throughout the library
         String url = buildCanvasUrl("courses/" + encode(id), Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, course.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, course.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Course.class, response);
     }
 
@@ -109,7 +105,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
         Map<String, List<String>> postParams = new HashMap<>();
         postParams.put("event", Collections.singletonList("delete"));
         String createdUrl = buildCanvasUrl("courses/" + courseId, Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, createdUrl, postParams);
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, createdUrl, postParams);
         if (response.getErrorHappened() || response.getResponseCode() != 200) {
             LOG.debug("Failed to delete course, error message: " + response.toString());
             return false;
@@ -130,7 +126,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
             path = "courses/";
         }
         String url = buildCanvasUrl(path + options.getCourseId(), Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, options.getOptionsMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, options.getOptionsMap());
         if (response.getErrorHappened() || response.getResponseCode() != 200) {
             LOG.debug("Failed to delete course, error message: {}", response);
             return false;
@@ -157,7 +153,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
     @Override
     public Optional<Deposit> uploadFile(String courseId, UploadOptions uploadOptions) throws IOException {
         String url = buildCanvasUrl("courses/"+ courseId+ "/files", Collections.emptyMap());
-        Response response = canvasMessenger.sendToCanvas(oauthToken, url, uploadOptions.getOptionsMap());
+        Response response = canvasMessenger.sendToCanvas(authorizationToken, url, uploadOptions.getOptionsMap());
         return responseParser.parseToObject(Deposit.class, response);
     }
 
@@ -176,7 +172,7 @@ public class CourseImpl extends BaseImpl<Course, CourseReader, CourseWriter> imp
         requestParams.put("course_ids[]", Arrays.asList(courseIds));
 
         String url = buildCanvasUrl("accounts/" + accountId + "/courses", Collections.emptyMap());
-        Response response = canvasMessenger.putToCanvas(oauthToken, url, requestParams);
+        Response response = canvasMessenger.putToCanvas(authorizationToken, url, requestParams);
 
         return responseParser.parseToObject(Progress.class, response);
     }

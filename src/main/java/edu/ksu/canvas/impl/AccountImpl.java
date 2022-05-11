@@ -8,6 +8,7 @@ import edu.ksu.canvas.model.Account;
 import edu.ksu.canvas.model.status.Delete;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.oauth.OauthToken;
 import edu.ksu.canvas.requestOptions.GetSubAccountsOptions;
 import edu.ksu.canvas.requestOptions.ListAccountOptions;
@@ -21,9 +22,9 @@ import java.util.*;
 public class AccountImpl extends BaseImpl<Account, AccountReader, AccountWriter> implements AccountReader, AccountWriter {
     private static final Logger LOG = LoggerFactory.getLogger(AccountImpl.class);
 
-    public AccountImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                       int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public AccountImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+											 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -32,7 +33,7 @@ public class AccountImpl extends BaseImpl<Account, AccountReader, AccountWriter>
         LOG.debug("getting account {}", accountId);
         String url = buildCanvasUrl("accounts/" + accountId, Collections.emptyMap());
 
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         if (response.getErrorHappened() || response.getResponseCode() != 200) {
             return Optional.empty();
         }
@@ -74,7 +75,7 @@ public class AccountImpl extends BaseImpl<Account, AccountReader, AccountWriter>
     public Optional<Account> createAccount(String accountId, Account account) throws IOException {
         LOG.debug("creating account");
         String url = buildCanvasUrl("accounts/" + accountId + "/sub_accounts", Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, account.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, account.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Account.class, response);
     }
 
@@ -82,7 +83,7 @@ public class AccountImpl extends BaseImpl<Account, AccountReader, AccountWriter>
     public Optional<Account> updateAccount(Account account) throws IOException {
         LOG.debug("updating account");
         String url = buildCanvasUrl("accounts/" + account.getId(), Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, account.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, account.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Account.class, response);
     }
 
@@ -90,7 +91,7 @@ public class AccountImpl extends BaseImpl<Account, AccountReader, AccountWriter>
     public Boolean deleteAccount(String parentAccountId, String accountId) throws IOException {
         Map<String, List<String>> postParams = new HashMap<>();
         String deleteUrl = buildCanvasUrl("accounts/" + parentAccountId+ "/sub_accounts/"+ accountId, Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, deleteUrl, postParams);
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, deleteUrl, postParams);
         if (response.getErrorHappened() || response.getResponseCode() != 200) {
             LOG.debug("Failed to delete course, error message: {}", response.toString());
             return false;

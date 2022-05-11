@@ -8,7 +8,7 @@ import edu.ksu.canvas.interfaces.ExternalToolWriter;
 import edu.ksu.canvas.model.ExternalTool;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.ListExternalToolsOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,9 +24,9 @@ import java.util.Optional;
 public class ExternalToolImpl extends BaseImpl<ExternalTool, ExternalToolReader, ExternalToolWriter> implements ExternalToolReader, ExternalToolWriter {
     private static final Logger LOG = LoggerFactory.getLogger(ExternalToolImpl.class);
 
-    public ExternalToolImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                            int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public ExternalToolImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+														int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -88,7 +88,7 @@ public class ExternalToolImpl extends BaseImpl<ExternalTool, ExternalToolReader,
         ensureToolValidForCreation(tool);
         Gson gson = GsonResponseParser.getDefaultGsonParser(serializeNulls);
         JsonObject toolJson = gson.toJsonTree(tool).getAsJsonObject();
-        Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, toolJson);
+        Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, toolJson);
         return responseParser.parseToObject(ExternalTool.class, response);
     }
 
@@ -112,21 +112,21 @@ public class ExternalToolImpl extends BaseImpl<ExternalTool, ExternalToolReader,
         }
         Gson gson = GsonResponseParser.getDefaultGsonParser(serializeNulls);
         JsonObject toolJson = gson.toJsonTree(tool).getAsJsonObject();
-        Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, toolJson);
+        Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, toolJson);
         return responseParser.parseToObject(ExternalTool.class, response);
     }
 
     public Optional<ExternalTool> deleteExternalToolInCourse(String courseId, Long toolId) throws IOException {
         LOG.debug("Deleting external tool {} from course {}", toolId, courseId);
         String url = buildCanvasUrl("courses/" + courseId + "/external_tools/" + toolId, Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, Collections.emptyMap());
         return responseParser.parseToObject(ExternalTool.class, response);
     }
 
     public Optional<ExternalTool> deleteExternalToolInAccount(String accountId, Long toolId) throws IOException {
         LOG.debug("Deleting external tool {} from account {}", toolId, accountId);
         String url = buildCanvasUrl("accounts/" + accountId + "/external_tools/" + toolId, Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, Collections.emptyMap());
         return responseParser.parseToObject(ExternalTool.class, response);
     }
 

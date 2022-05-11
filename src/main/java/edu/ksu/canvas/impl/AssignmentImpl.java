@@ -1,35 +1,29 @@
 package edu.ksu.canvas.impl;
 
 import com.google.gson.reflect.TypeToken;
-
 import edu.ksu.canvas.interfaces.AssignmentReader;
 import edu.ksu.canvas.interfaces.AssignmentWriter;
 import edu.ksu.canvas.model.assignment.Assignment;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.requestOptions.GetSingleAssignmentOptions;
 import edu.ksu.canvas.requestOptions.ListCourseAssignmentsOptions;
 import edu.ksu.canvas.requestOptions.ListUserAssignmentOptions;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class AssignmentImpl extends BaseImpl<Assignment, AssignmentReader, AssignmentWriter> implements AssignmentReader, AssignmentWriter{
     private static final Logger LOG = LoggerFactory.getLogger(AssignmentImpl.class);
 
-    public AssignmentImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                          int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public AssignmentImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+													int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -47,7 +41,7 @@ public class AssignmentImpl extends BaseImpl<Assignment, AssignmentReader, Assig
     @Override
     public Optional<Assignment> getSingleAssignment(GetSingleAssignmentOptions options) throws IOException {
         String url = buildCanvasUrl("courses/" + options.getCourseId() + "/assignments/" + options.getAssignmentId(), options.getOptionsMap());
-        Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
+        Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
         return responseParser.parseToObject(Assignment.class, response);
     }
 
@@ -57,7 +51,7 @@ public class AssignmentImpl extends BaseImpl<Assignment, AssignmentReader, Assig
             throw new IllegalArgumentException("Assignment must have a name");
         }
         String url = buildCanvasUrl("courses/" + courseId + "/assignments", Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, assignment.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, assignment.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Assignment.class, response);
     }
 
@@ -66,7 +60,7 @@ public class AssignmentImpl extends BaseImpl<Assignment, AssignmentReader, Assig
         Map<String, List<String>> postParams = new HashMap<>();
         postParams.put("event", Collections.singletonList("delete"));
         String createdUrl = buildCanvasUrl("courses/" + courseId + "/assignments/" + assignmentId, Collections.emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, createdUrl, postParams);
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, createdUrl, postParams);
         LOG.debug("response {}", response.toString());
         if(response.getErrorHappened() || response.getResponseCode() != 200){
             LOG.debug("Failed to delete assignment, error message: " + response.toString());
@@ -78,7 +72,7 @@ public class AssignmentImpl extends BaseImpl<Assignment, AssignmentReader, Assig
     @Override
     public Optional<Assignment> editAssignment(String courseId, Assignment assignment) throws IOException {
         String url = buildCanvasUrl("courses/" + courseId + "/assignments/" + assignment.getId(), Collections.emptyMap());
-        Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, assignment.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, assignment.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Assignment.class, response);
     }
 

@@ -1,15 +1,12 @@
 package edu.ksu.canvas.impl;
 
-import static java.util.Collections.emptyMap;
-
 import com.google.gson.reflect.TypeToken;
-
-import edu.ksu.canvas.interfaces.*;
+import edu.ksu.canvas.interfaces.LoginReader;
+import edu.ksu.canvas.interfaces.LoginWriter;
 import edu.ksu.canvas.model.Login;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
-import edu.ksu.canvas.oauth.OauthToken;
-
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +16,14 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyMap;
+
 public class LoginImpl extends BaseImpl<Login, LoginReader, LoginWriter> implements LoginReader, LoginWriter {
     private static final Logger LOG = LoggerFactory.getLogger(LoginImpl.class);
 
-    public LoginImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient,
-                     int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-        super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout,
+    public LoginImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient,
+										 int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+        super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout,
                 paginationPageSize, serializeNulls);
     }
 
@@ -44,7 +43,7 @@ public class LoginImpl extends BaseImpl<Login, LoginReader, LoginWriter> impleme
         }
 
         String url = buildCanvasUrl(String.format("accounts/%s/logins/%s", login.getAccountId(), login.getId()), emptyMap());
-        Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, login.toJsonObject(serializeNulls));
+        Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, login.toJsonObject(serializeNulls));
         return responseParser.parseToObject(Login.class, response);
     }
 
@@ -56,7 +55,7 @@ public class LoginImpl extends BaseImpl<Login, LoginReader, LoginWriter> impleme
         }
 
         String url = buildCanvasUrl(String.format("users/%s/logins/%s", login.getUserId(), login.getId()), emptyMap());
-        Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, emptyMap());
+        Response response = canvasMessenger.deleteFromCanvas(authorizationToken, url, emptyMap());
         return responseParser.parseToObject(Login.class, response);
     }
 
