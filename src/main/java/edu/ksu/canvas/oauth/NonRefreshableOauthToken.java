@@ -8,7 +8,13 @@ public class NonRefreshableOauthToken implements OauthToken {
     public NonRefreshableOauthToken(String token) {
         this.token = token;
     }
-    @Override
+
+		@Override
+		public String getHeaderMethod() {
+			return "Bearer";
+		}
+
+		@Override
     public String getAccessToken() {
         return token;
     }

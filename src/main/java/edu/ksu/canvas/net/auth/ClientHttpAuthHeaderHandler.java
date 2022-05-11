@@ -9,6 +9,6 @@ import org.apache.http.message.AbstractHttpMessage;
  */
 public class ClientHttpAuthHeaderHandler {
 	public void addAuth(AbstractHttpMessage httpGet, AuthorizationToken token) {
-		httpGet.setHeader("Authorization", "Bearer" + " " + token.getToken());
+		httpGet.setHeader("Authorization", token.getHeaderMethod() + " " + token.getToken());
 	}
 }

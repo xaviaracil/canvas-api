@@ -5,8 +5,8 @@ import edu.ksu.canvas.net.auth.AuthorizationToken;
 import java.io.Serializable;
 
 public interface OauthToken extends AuthorizationToken {
-
-    String getAccessToken();
+	
+	String getAccessToken();
    
     void refresh();
 }

@@ -12,6 +12,11 @@ public class BasicAuthorizationToken implements AuthorizationToken {
 	}
 
 	@Override
+	public String getHeaderMethod() {
+		return "Basic";
+	}
+
+	@Override
 	public String getToken() {
 		return token;
 	}

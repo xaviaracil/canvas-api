@@ -67,6 +67,10 @@ public class RefreshableOauthToken implements OauthToken {
         return apiToken;
     }
 
+		@Override
+		public String getHeaderMethod() {
+			return "Bearer";
+		}
 
 		@Override
 		public String getToken() {

@@ -7,6 +7,8 @@ import java.io.Serializable;
  * Made for the project canvas-api
  */
 public interface AuthorizationToken extends Serializable {
+	String getHeaderMethod();
+
 	String getToken();
 	void refresh();
 }
