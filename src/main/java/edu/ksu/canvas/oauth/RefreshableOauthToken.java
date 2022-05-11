@@ -1,6 +1,6 @@
 package edu.ksu.canvas.oauth;
 
-import edu.ksu.canvas.exception.InvalidOauthTokenException;
+import edu.ksu.canvas.exception.InvalidAuthTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class RefreshableOauthToken implements OauthToken {
         try {
             TokenRefreshResponse refreshResponse = tokenRefresher.getNewToken(refreshToken);
             if(refreshResponse == null) {
-                throw new InvalidOauthTokenException();
+                throw new InvalidAuthTokenException();
             }
             apiToken = refreshResponse.getAccessToken();
             tokenExpiration = new TokenExpiration(refreshResponse.getExpiresIn());

@@ -35,7 +35,7 @@ public class SimpleRestClientUTest extends LocalServerTestBase {
         restClient.sendApiGet(emptyAdminToken, baseUrl + url, 100, 100);
     }
 
-    @Test(expected=InvalidOauthTokenException.class)
+    @Test(expected= InvalidAuthTokenException.class)
     public void http401InvalidTokenThrowsException() throws Exception {
         String url = "/invalidAccessToken";
         registerUrlResponse(url, "/SampleJson/oauth/InvalidAccessTokenResponse.json", 401, Collections.singletonMap(HttpHeaders.WWW_AUTHENTICATE, ""));

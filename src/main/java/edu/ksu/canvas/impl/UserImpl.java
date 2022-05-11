@@ -2,7 +2,7 @@ package edu.ksu.canvas.impl;
 
 import com.google.gson.reflect.TypeToken;
 import edu.ksu.canvas.constants.CanvasConstants;
-import edu.ksu.canvas.exception.InvalidOauthTokenException;
+import edu.ksu.canvas.exception.InvalidAuthTokenException;
 import edu.ksu.canvas.interfaces.UserReader;
 import edu.ksu.canvas.interfaces.UserWriter;
 import edu.ksu.canvas.model.User;
@@ -33,12 +33,12 @@ public class UserImpl extends BaseImpl<User, UserReader, UserWriter> implements 
     }
 
     @Override
-    public Optional<User> createUser(User user) throws InvalidOauthTokenException, IOException {
+    public Optional<User> createUser(User user) throws InvalidAuthTokenException, IOException {
         return createUser(user, new CreateUserOptions());
     }
 
     @Override
-    public Optional<User> createUser(User user, CreateUserOptions options) throws InvalidOauthTokenException, IOException {
+    public Optional<User> createUser(User user, CreateUserOptions options) throws InvalidAuthTokenException, IOException {
         String createdUrl = buildCanvasUrl("accounts/" + CanvasConstants.ACCOUNT_ID + "/users", Collections.emptyMap());
         LOG.debug("create URl for user creation : {}", createdUrl);
         Map<String, List<String>> parameterMap = options.getOptionsMap();
@@ -52,7 +52,7 @@ public class UserImpl extends BaseImpl<User, UserReader, UserWriter> implements 
     }
 
     @Override
-    public Optional<User> updateUser(User user) throws InvalidOauthTokenException, IOException {
+    public Optional<User> updateUser(User user) throws InvalidAuthTokenException, IOException {
         if(user == null || user.getId() == 0) {
             throw new IllegalArgumentException("User to update must not be null and have a Canvas ID assigned");
         }

@@ -9,6 +9,6 @@ package edu.ksu.canvas.exception;
  * that the user's refresh token (or the manually generated admin token)
  * is invalid.
  */
-public class InvalidOauthTokenException extends CanvasException {
+public class InvalidAuthTokenException extends CanvasException {
     private static final long serialVersionUID = 1L;
 }

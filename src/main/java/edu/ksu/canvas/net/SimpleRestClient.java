@@ -156,7 +156,7 @@ public class SimpleRestClient implements RestClient {
 
     @Override
     public Response sendApiPost(OauthToken token, String url, Map<String, List<String>> postParameters,
-                                int connectTimeout, int readTimeout) throws InvalidOauthTokenException, IOException {
+                                int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API POST request to URL: " + url);
         Response response = new Response();
         HttpClient httpClient = createHttpClient(connectTimeout, readTimeout);
@@ -178,7 +178,7 @@ public class SimpleRestClient implements RestClient {
 
     @Override
     public Response sendApiPostFile(OauthToken token, String url, Map<String, List<String>> postParameters, String fileParameter, String filePath, InputStream is,
-                                int connectTimeout, int readTimeout) throws InvalidOauthTokenException, IOException {
+                                int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API POST file request to URL: " + url);
         Response response = new Response();
         HttpClient httpClient = createHttpClient(connectTimeout, readTimeout);
@@ -212,7 +212,7 @@ public class SimpleRestClient implements RestClient {
 
     @Override
     public Response sendApiPut(OauthToken token, String url, Map<String, List<String>> putParameters,
-                               int connectTimeout, int readTimeout) throws InvalidOauthTokenException, IOException {
+                               int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API PUT request to URL: " + url);
         Response response = new Response();
         HttpClient httpClient = createHttpClient(connectTimeout, readTimeout);
@@ -235,7 +235,7 @@ public class SimpleRestClient implements RestClient {
 
     @Override
     public Response sendApiDelete(OauthToken token, String url, Map<String, List<String>> deleteParameters,
-                                  int connectTimeout, int readTimeout) throws InvalidOauthTokenException, IOException {
+                                  int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API DELETE request to URL: " + url);
         Response response = new Response();
 
@@ -328,7 +328,7 @@ public class SimpleRestClient implements RestClient {
             //See https://canvas.instructure.com/doc/api/file.oauth.html#storing-access-tokens
             if(httpResponse.containsHeader(HttpHeaders.WWW_AUTHENTICATE)) {
                 LOG.debug("User's token is invalid. It might need refreshing");
-                throw new InvalidOauthTokenException();
+                throw new InvalidAuthTokenException();
             }
             LOG.error("User is not authorized to perform this action");
             throw new UnauthorizedException();
