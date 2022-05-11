@@ -67,6 +67,12 @@ public class RefreshableOauthToken implements OauthToken {
         return apiToken;
     }
 
+
+		@Override
+		public String getToken() {
+			return getAccessToken();
+		}
+
     protected Date now() {
         return new Date();
     }
