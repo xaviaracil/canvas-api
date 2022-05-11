@@ -9,6 +9,7 @@ import edu.ksu.canvas.exception.*;
 import edu.ksu.canvas.impl.GsonResponseParser;
 import edu.ksu.canvas.model.status.CanvasErrorResponse;
 import edu.ksu.canvas.model.status.CanvasErrorResponse.ErrorMessage;
+import edu.ksu.canvas.net.auth.ClientHttpAuthHeaderHandler;
 import edu.ksu.canvas.oauth.OauthToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -56,7 +57,13 @@ public class SimpleRestClient implements RestClient {
 
     private List<ErrorHandler> errorHandlers;
 
-    public SimpleRestClient() {
+		private ClientHttpAuthHeaderHandler clientHttpAuthHeaderHandler = new ClientHttpAuthHeaderHandler();
+
+		public void setClientHttpAuthHeaderHandler(ClientHttpAuthHeaderHandler clientHttpAuthHeaderHandler) {
+				this.clientHttpAuthHeaderHandler = clientHttpAuthHeaderHandler;
+		}
+
+		public SimpleRestClient() {
         errorHandlers = new ArrayList<>();
         errorHandlers.add(new UserErrorHandler());
         errorHandlers.add(new GenericErrorHandler());
@@ -70,8 +77,8 @@ public class SimpleRestClient implements RestClient {
         Long beginTime = System.currentTimeMillis();
         Response response = new Response();
         try (CloseableHttpClient httpClient = createHttpClient(connectTimeout, readTimeout)) {
-            HttpGet httpGet = new HttpGet(url);
-            httpGet.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+					HttpGet httpGet = new HttpGet(url);
+					clientHttpAuthHeaderHandler.addAuth(httpGet, token);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
 
@@ -127,7 +134,7 @@ public class SimpleRestClient implements RestClient {
             throw new IllegalArgumentException("Method must be either POST or PUT");
         }
         Long beginTime = System.currentTimeMillis();
-        action.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+				clientHttpAuthHeaderHandler.addAuth(action, token);
 
         StringEntity requestBody = new StringEntity(json, ContentType.APPLICATION_JSON);
         action.setEntity(requestBody);
@@ -155,7 +162,7 @@ public class SimpleRestClient implements RestClient {
         HttpClient httpClient = createHttpClient(connectTimeout, readTimeout);
         Long beginTime = System.currentTimeMillis();
         HttpPost httpPost = new HttpPost(url);
-        httpPost.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+				clientHttpAuthHeaderHandler.addAuth(httpPost, token);
         List<NameValuePair> params = convertParameters(postParameters);
 
         httpPost.setEntity(new UrlEncodedFormEntity(params, CanvasConstants.URLENCODING_TYPE));
@@ -177,7 +184,7 @@ public class SimpleRestClient implements RestClient {
         HttpClient httpClient = createHttpClient(connectTimeout, readTimeout);
         Long beginTime = System.currentTimeMillis();
         HttpPost httpPost = new HttpPost(url);
-        httpPost.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+				clientHttpAuthHeaderHandler.addAuth(httpPost, token);
         List<NameValuePair> params = convertParameters(postParameters);
 
         MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
@@ -211,7 +218,7 @@ public class SimpleRestClient implements RestClient {
         HttpClient httpClient = createHttpClient(connectTimeout, readTimeout);
         Long beginTime = System.currentTimeMillis();
         HttpPut httpPut = new HttpPut(url);
-        httpPut.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+				clientHttpAuthHeaderHandler.addAuth(httpPut, token);
         List<NameValuePair> params = convertParameters(putParameters);
 
         httpPut.setEntity(new UrlEncodedFormEntity(params, CanvasConstants.URLENCODING_TYPE));
@@ -246,7 +253,7 @@ public class SimpleRestClient implements RestClient {
         HttpDeleteWithBody httpDelete = new HttpDeleteWithBody();
 
         httpDelete.setURI(URI.create(url));
-        httpDelete.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+				clientHttpAuthHeaderHandler.addAuth(httpDelete, token);
         List<NameValuePair> params = convertParameters(deleteParameters);
 
         httpDelete.setEntity(new UrlEncodedFormEntity(params, CanvasConstants.URLENCODING_TYPE));
