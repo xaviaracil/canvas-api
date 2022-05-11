@@ -8,7 +8,7 @@ import org.apache.http.message.AbstractHttpMessage;
  * Made for the project canvas-api
  */
 public class ClientHttpAuthHeaderHandler {
-	public void addAuth(AbstractHttpMessage httpGet, OauthToken token) {
-		httpGet.setHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+	public void addAuth(AbstractHttpMessage httpGet, AuthorizationToken token) {
+		httpGet.setHeader("Authorization", "Bearer" + " " + token.getToken());
 	}
 }

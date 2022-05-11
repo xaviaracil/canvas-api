@@ -9,6 +9,7 @@ import edu.ksu.canvas.exception.*;
 import edu.ksu.canvas.impl.GsonResponseParser;
 import edu.ksu.canvas.model.status.CanvasErrorResponse;
 import edu.ksu.canvas.model.status.CanvasErrorResponse.ErrorMessage;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.net.auth.ClientHttpAuthHeaderHandler;
 import edu.ksu.canvas.oauth.OauthToken;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,7 @@ public class SimpleRestClient implements RestClient {
     }
 
     @Override
-    public Response sendApiGet(@NotNull OauthToken token, @NotNull String url,
+    public Response sendApiGet(@NotNull AuthorizationToken token, @NotNull String url,
                                int connectTimeout, int readTimeout) throws IOException {
 
         LOG.debug("Sending GET request to URL: " + url);
@@ -109,17 +110,17 @@ public class SimpleRestClient implements RestClient {
     }
 
     @Override
-    public Response sendJsonPut(OauthToken token, String url, String json, int connectTimeout, int readTimeout) throws IOException {
+    public Response sendJsonPut(AuthorizationToken token, String url, String json, int connectTimeout, int readTimeout) throws IOException {
         return sendJsonPostOrPut(token, url, json, connectTimeout, readTimeout, "PUT");
     }
 
     @Override
-    public Response sendJsonPost(OauthToken token, String url, String json, int connectTimeout, int readTimeout) throws IOException {
+    public Response sendJsonPost(AuthorizationToken token, String url, String json, int connectTimeout, int readTimeout) throws IOException {
         return sendJsonPostOrPut(token, url, json, connectTimeout, readTimeout, "POST");
     }
 
     // PUT and POST are identical calls except for the header specifying the method
-    private Response sendJsonPostOrPut(OauthToken token, String url, String json,
+    private Response sendJsonPostOrPut(AuthorizationToken token, String url, String json,
                                        int connectTimeout, int readTimeout, String method) throws IOException {
         LOG.debug("Sending JSON " + method + " to URL: " + url);
         Response response = new Response();
@@ -155,7 +156,7 @@ public class SimpleRestClient implements RestClient {
     }
 
     @Override
-    public Response sendApiPost(OauthToken token, String url, Map<String, List<String>> postParameters,
+    public Response sendApiPost(AuthorizationToken token, String url, Map<String, List<String>> postParameters,
                                 int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API POST request to URL: " + url);
         Response response = new Response();
@@ -177,7 +178,7 @@ public class SimpleRestClient implements RestClient {
     }
 
     @Override
-    public Response sendApiPostFile(OauthToken token, String url, Map<String, List<String>> postParameters, String fileParameter, String filePath, InputStream is,
+    public Response sendApiPostFile(AuthorizationToken token, String url, Map<String, List<String>> postParameters, String fileParameter, String filePath, InputStream is,
                                 int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API POST file request to URL: " + url);
         Response response = new Response();
@@ -211,7 +212,7 @@ public class SimpleRestClient implements RestClient {
     }
 
     @Override
-    public Response sendApiPut(OauthToken token, String url, Map<String, List<String>> putParameters,
+    public Response sendApiPut(AuthorizationToken token, String url, Map<String, List<String>> putParameters,
                                int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API PUT request to URL: " + url);
         Response response = new Response();
@@ -234,8 +235,8 @@ public class SimpleRestClient implements RestClient {
 
 
     @Override
-    public Response sendApiDelete(OauthToken token, String url, Map<String, List<String>> deleteParameters,
-                                  int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
+    public Response sendApiDelete(AuthorizationToken token, String url, Map<String, List<String>> deleteParameters,
+																	int connectTimeout, int readTimeout) throws InvalidAuthTokenException, IOException {
         LOG.debug("Sending API DELETE request to URL: " + url);
         Response response = new Response();
 

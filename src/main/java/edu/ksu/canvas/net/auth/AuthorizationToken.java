@@ -8,4 +8,5 @@ import java.io.Serializable;
  */
 public interface AuthorizationToken extends Serializable {
 	String getToken();
+	void refresh();
 }
