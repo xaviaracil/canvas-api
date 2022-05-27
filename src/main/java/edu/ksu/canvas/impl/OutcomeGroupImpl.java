@@ -191,6 +191,22 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
+	public Optional<OutcomeGroup> deleteOutcomeGroupInAccount(String accountId, String outcomeGroupId) throws IOException {
+		LOG.debug("Deleting outcome group {} from account {}", outcomeGroupId, accountId);
+		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups/" + outcomeGroupId, Collections.emptyMap());
+		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+		return responseParser.parseToObject(OutcomeGroup.class, response);
+	}
+
+	@Override
+	public Optional<OutcomeGroup> deleteOutcomeGroupInCourse(String courseId, String outcomeGroupId) throws IOException {
+		LOG.debug("Deleting outcome group {} from course {}", outcomeGroupId, courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + outcomeGroupId, Collections.emptyMap());
+		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+		return responseParser.parseToObject(OutcomeGroup.class, response);
+	}
+
+	@Override
 	protected Type listType() {
 		return new TypeToken<List<OutcomeGroup>>(){}.getType();
 	}

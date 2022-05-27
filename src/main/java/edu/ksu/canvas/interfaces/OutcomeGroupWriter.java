@@ -92,10 +92,30 @@ public interface OutcomeGroupWriter extends CanvasWriter<OutcomeGroup, OutcomeGr
 	 * in the Canvas docs for details.
 	 * @param courseId the course ID of the course under which to place this subgroup
 	 * @param outcomeGroupId the outcome group ID of the outcome group under which to place this outcome
-	 * @param outcomeId the outcome ID of the outcome to be linked
+	 * @param linkId the outcome ID of the outcome to be linked
 	 * @return the newly created Outcome Link
 	 * @throws IOException When there is an error communicating with Canvas
 	 */
 	Optional<OutcomeLink> linkOutcomeInCourse(String courseId, String outcomeGroupId, String linkId) throws IOException;
 
+	/**
+	 * Delete an outcome group from an account
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.destroy">Delete an outcome group</a>
+	 * in the Canvas docs for details.
+	 * @param accountId the account ID of the account containing the outcome group
+	 * @param outcomeGroupId the outcome group ID of the outcome group to delete
+	 * @return the deleted Outcome Link
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeGroup> deleteOutcomeGroupInAccount(String accountId, String outcomeGroupId) throws IOException;
+	/**
+	 * Delete an outcome group from a course
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.destroy">Delete an outcome group</a>
+	 * in the Canvas docs for details.
+	 * @param courseId the course ID of the course under hte outcome group is placed
+	 * @param outcomeGroupId the outcome group ID of the outcome group to delete
+	 * @return the deleted Outcome Link
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeGroup> deleteOutcomeGroupInCourse(String courseId, String outcomeGroupId) throws IOException;
 }
