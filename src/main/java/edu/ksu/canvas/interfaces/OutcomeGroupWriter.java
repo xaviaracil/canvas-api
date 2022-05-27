@@ -99,6 +99,30 @@ public interface OutcomeGroupWriter extends CanvasWriter<OutcomeGroup, OutcomeGr
 	Optional<OutcomeLink> linkOutcomeInCourse(String courseId, String outcomeGroupId, String linkId) throws IOException;
 
 	/**
+	 * Unlinks an existing outcome from the group
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.unlink">Unlink an outcome</a>
+	 * in the Canvas docs for details.
+	 * @param accountId the account ID of the account containing the outcome group
+	 * @param outcomeGroupId the outcome group ID of the outcome group under which the outcome is linked
+	 * @param outcomeId the outcome ID of the outcome to be unlinked
+	 * @return the deleted Outcome Link
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeLink> unlinkOutcomeFromAccount(String accountId, String outcomeGroupId, String outcomeId) throws IOException;
+
+	/**
+	 * Unlinks an existing outcome from the group
+	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.unlink">Unlink an outcome</a>
+	 * in the Canvas docs for details.
+	 * @param courseId the course ID of the course under which the outcome is linked
+	 * @param outcomeGroupId the outcome group ID of the outcome group under which the outcome is linked
+	 * @param outcomeId the outcome ID of the outcome to be unlinked
+	 * @return the deleted Outcome Link
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<OutcomeLink> unlinkOutcomeFromCourse(String courseId, String outcomeGroupId, String outcomeId) throws IOException;
+
+	/**
 	 * Delete an outcome group from an account
 	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.destroy">Delete an outcome group</a>
 	 * in the Canvas docs for details.

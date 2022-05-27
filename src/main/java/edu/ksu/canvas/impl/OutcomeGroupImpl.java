@@ -205,6 +205,22 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
+	public Optional<OutcomeLink> unlinkOutcomeFromAccount(String accountId, String outcomeGroupId, String outcomeId) throws IOException {
+		LOG.debug("unlink outcome {} from outcome group {} of account {}", outcomeId, outcomeGroupId, accountId);
+		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups/" + outcomeGroupId + "/outcomes/" + outcomeId, Collections.emptyMap());
+		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+		return responseParser.parseToObject(OutcomeLink.class, response);
+	}
+
+	@Override
+	public Optional<OutcomeLink> unlinkOutcomeFromCourse(String courseId, String outcomeGroupId, String outcomeId) throws IOException {
+		LOG.debug("unlink outcome {} from outcome group {} of course {}", outcomeId, outcomeGroupId, courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + outcomeGroupId + "/outcomes/" + outcomeId, Collections.emptyMap());
+		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+		return responseParser.parseToObject(OutcomeLink.class, response);
+	}
+
+	@Override
 	protected Type listType() {
 		return new TypeToken<List<OutcomeGroup>>(){}.getType();
 	}
