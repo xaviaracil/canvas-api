@@ -1,17 +1,13 @@
 package edu.ksu.canvas.impl;
 
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import edu.ksu.canvas.interfaces.OutcomeGroupReader;
 import edu.ksu.canvas.interfaces.OutcomeGroupWriter;
-import edu.ksu.canvas.model.outcomes.Outcome;
 import edu.ksu.canvas.model.outcomes.OutcomeGroup;
-import edu.ksu.canvas.model.outcomes.OutcomeLink;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
 import edu.ksu.canvas.oauth.OauthToken;
 import edu.ksu.canvas.requestOptions.CreateOutcomeGroupOptions;
-import edu.ksu.canvas.requestOptions.CreateOutcomeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -120,18 +115,6 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
-	public Optional<Outcome> getOutcome(String id) throws IOException {
-		LOG.debug("getting outcome with id {}", id);
-		String url = buildCanvasUrl("outcomes/" + id, Collections.emptyMap());
-
-		Response response = canvasMessenger.getSingleResponseFromCanvas(oauthToken, url);
-		if (response.getErrorHappened() || response.getResponseCode() != 200) {
-			return Optional.empty();
-		}
-		return responseParser.parseToObject(Outcome.class, response);
-	}
-
-	@Override
 	public Optional<OutcomeGroup> createSubgroup(String parentOutcomeGroupId, CreateOutcomeGroupOptions options) throws IOException {
 		LOG.debug("creating outcome group as subgroup of {}", parentOutcomeGroupId);
 		String url = buildCanvasUrl("global/outcome_groups/" + parentOutcomeGroupId + "/subgroups", Collections.emptyMap());
@@ -156,41 +139,6 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
-	public Optional<OutcomeLink> createOutcome(String outcomeGroupId, Outcome outcome) throws IOException {
-		LOG.debug("creating outcome in {}", outcomeGroupId);
-		String url = buildCanvasUrl("global/outcome_groups/" + outcomeGroupId + "/outcomes", Collections.emptyMap());
-		final JsonObject jsonObject = outcome.toJsonObject(serializeNulls);
-		Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, jsonObject.getAsJsonObject("outcome"));
-		return responseParser.parseToObject(OutcomeLink.class, response);
-	}
-
-	@Override
-	public Optional<OutcomeLink> createOutcomeInAccount(String accountId, String outcomeGroupId, Outcome outcome) throws IOException {
-		LOG.debug("creating outcome in account {} as child of {}", accountId, outcomeGroupId);
-		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups/" + outcomeGroupId + "/outcomes", Collections.emptyMap());
-		final JsonObject jsonObject = outcome.toJsonObject(serializeNulls);
-		Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, jsonObject.getAsJsonObject("outcome"));
-		return responseParser.parseToObject(OutcomeLink.class, response);
-	}
-
-	@Override
-	public Optional<OutcomeLink> createOutcomeInCourse(String courseId, String outcomeGroupId, Outcome outcome) throws IOException {
-		LOG.debug("creating outcome group in course {} as child of {}", courseId, outcomeGroupId);
-		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + outcomeGroupId + "/outcomes", Collections.emptyMap());
-		final JsonObject jsonObject = outcome.toJsonObject(serializeNulls);
-		Response response = canvasMessenger.sendJsonPostToCanvas(oauthToken, url, jsonObject.getAsJsonObject("outcome"));
-		return responseParser.parseToObject(OutcomeLink.class, response);
-	}
-
-	@Override
-	public Optional<OutcomeLink> linkOutcomeInCourse(String courseId, String outcomeGroupId, String outcomeId) throws IOException {
-		LOG.debug("link outcome {} in outcome group of course {}", outcomeId, courseId, outcomeGroupId);
-		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + outcomeGroupId + "/outcomes/" + outcomeId, Collections.emptyMap());
-		Response response = canvasMessenger.sendJsonPutToCanvas(oauthToken, url, new JsonObject());
-		return responseParser.parseToObject(OutcomeLink.class, response);
-	}
-
-	@Override
 	public Optional<OutcomeGroup> deleteOutcomeGroupInAccount(String accountId, String outcomeGroupId) throws IOException {
 		LOG.debug("Deleting outcome group {} from account {}", outcomeGroupId, accountId);
 		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups/" + outcomeGroupId, Collections.emptyMap());
@@ -204,22 +152,6 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + outcomeGroupId, Collections.emptyMap());
 		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
 		return responseParser.parseToObject(OutcomeGroup.class, response);
-	}
-
-	@Override
-	public Optional<OutcomeLink> unlinkOutcomeFromAccount(String accountId, String outcomeGroupId, String outcomeId) throws IOException {
-		LOG.debug("unlink outcome {} from outcome group {} of account {}", outcomeId, outcomeGroupId, accountId);
-		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups/" + outcomeGroupId + "/outcomes/" + outcomeId, Collections.emptyMap());
-		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
-		return responseParser.parseToObject(OutcomeLink.class, response);
-	}
-
-	@Override
-	public Optional<OutcomeLink> unlinkOutcomeFromCourse(String courseId, String outcomeGroupId, String outcomeId) throws IOException {
-		LOG.debug("unlink outcome {} from outcome group {} of course {}", outcomeId, outcomeGroupId, courseId);
-		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + outcomeGroupId + "/outcomes/" + outcomeId, Collections.emptyMap());
-		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
-		return responseParser.parseToObject(OutcomeLink.class, response);
 	}
 
 	@Override
