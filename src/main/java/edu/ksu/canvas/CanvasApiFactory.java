@@ -189,6 +189,7 @@ public class CanvasApiFactory {
         readerMap.put(FeatureFlagReader.class, FeatureFlagImpl.class);
         readerMap.put(RubricReader.class, RubricImpl.class);
         readerMap.put(OutcomeGroupReader.class, OutcomeGroupImpl.class);
+        readerMap.put(OutcomeReader.class, OutcomeImpl.class);
 
         writerMap.put(AccountWriter.class, AccountImpl.class);
         writerMap.put(AssignmentOverrideWriter.class, AssignmentOverrideImpl.class);
@@ -223,5 +224,6 @@ public class CanvasApiFactory {
         writerMap.put(FeatureFlagWriter.class, FeatureFlagImpl.class);
         writerMap.put(RubricWriter.class, RubricImpl.class);
         writerMap.put(OutcomeGroupWriter.class, OutcomeGroupImpl.class);
+        writerMap.put(OutcomeWriter.class, OutcomeImpl.class);
     }
 }
