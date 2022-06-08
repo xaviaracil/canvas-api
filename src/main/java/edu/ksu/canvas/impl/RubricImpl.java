@@ -59,6 +59,14 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
 	}
 
 	@Override
+	public Optional<Rubric> deleteRubric(String courseId, String id) throws IOException {
+		LOG.debug("deleting rubric {} in course {}", id, courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/rubrics/" + id, Collections.emptyMap());
+		Response response = canvasMessenger.deleteFromCanvas(oauthToken, url, Collections.emptyMap());
+		return responseParser.parseToObject(Rubric.class, response);
+	}
+
+	@Override
     protected Type listType() {
         return new TypeToken<List<Rubric>>(){}.getType();
     }
