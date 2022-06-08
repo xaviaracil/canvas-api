@@ -51,6 +51,13 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
     }
 
 	@Override
+	public List<Rubric> getRubricsInCourse(String courseId) throws IOException {
+		LOG.debug("Retrieving rubrics in course {}", courseId);
+		String url = buildCanvasUrl(String.format("courses/%s/rubrics", courseId), Collections.emptyMap());
+		return getListFromCanvas(url);
+	}
+
+	@Override
 	public Optional<RubricWriterResponse> createSingleRubricInCourse(String courseId, RubricCreationRequest rubric) throws IOException {
 		LOG.debug("creating rubric in course {}", courseId);
 		String url = buildCanvasUrl("courses/" + courseId + "/rubrics", Collections.emptyMap());
