@@ -1,14 +1,19 @@
 package edu.ksu.canvas.net.auth;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 /**
  * Universitat Oberta de Catalunya
  * Made for the project canvas-api
  */
 public class BasicAuthorizationToken implements AuthorizationToken {
-	private String token;
+	private String user;
+	private String password;
 
-	public BasicAuthorizationToken(String token) {
-		this.token = token;
+	public BasicAuthorizationToken(String user, String password) {
+		this.user = user;
+		this.password = password;
 	}
 
 	@Override
@@ -18,7 +23,7 @@ public class BasicAuthorizationToken implements AuthorizationToken {
 
 	@Override
 	public String getToken() {
-		return token;
+		return new String(Base64.getEncoder().encode((user + ":" + password).getBytes(StandardCharsets.UTF_8)));
 	}
 
 	@Override
