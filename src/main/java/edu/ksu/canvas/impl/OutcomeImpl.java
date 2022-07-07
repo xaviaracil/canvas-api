@@ -8,6 +8,7 @@ import edu.ksu.canvas.model.outcomes.Outcome;
 import edu.ksu.canvas.model.outcomes.OutcomeLink;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
+import edu.ksu.canvas.net.auth.AuthorizationToken;
 import edu.ksu.canvas.oauth.OauthToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ import java.util.Optional;
 public class OutcomeImpl extends BaseImpl<OutcomeLink, OutcomeReader, OutcomeWriter> implements OutcomeReader, OutcomeWriter {
 	private static final Logger LOG = LoggerFactory.getLogger(OutcomeLink.class);
 
-	public OutcomeImpl(String canvasBaseUrl, Integer apiVersion, OauthToken oauthToken, RestClient restClient, int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
-		super(canvasBaseUrl, apiVersion, oauthToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
+	public OutcomeImpl(String canvasBaseUrl, Integer apiVersion, AuthorizationToken authorizationToken, RestClient restClient, int connectTimeout, int readTimeout, Integer paginationPageSize, Boolean serializeNulls) {
+		super(canvasBaseUrl, apiVersion, authorizationToken, restClient, connectTimeout, readTimeout, paginationPageSize, serializeNulls);
 	}
 
 

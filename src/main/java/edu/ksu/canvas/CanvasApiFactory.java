@@ -107,12 +107,12 @@ public class CanvasApiFactory {
     /**
      * Get a writer implementation to push data into Canvas.
      * @param type Interface type you wish to get an implementation for
-     * @param oauthToken An OAuth token to use for authentication when making API calls
+     * @param authorizationToken An Auth token to use for authentication when making API calls
      * @param <T> A writer implementation
      * @return A writer implementation class
      */
-    public <T extends CanvasWriter> T getWriter(Class<T> type, OauthToken oauthToken) {
-        return getWriter(type, oauthToken, false);
+    public <T extends CanvasWriter> T getWriter(Class<T> type, AuthorizationToken authorizationToken) {
+        return getWriter(type, authorizationToken, false);
     }
 
     /**
