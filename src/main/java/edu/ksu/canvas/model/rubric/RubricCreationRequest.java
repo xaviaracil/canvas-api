@@ -11,6 +11,8 @@ import java.util.List;
  * Made for the project canvas-api
  */
 public class RubricCreationRequest extends BaseCanvasModel {
+	private long id;
+
 	private long associationId;
 	private String title;
 	private Boolean freeFormCriterionComments;
@@ -23,6 +25,15 @@ public class RubricCreationRequest extends BaseCanvasModel {
 	private Boolean hidePoints;
 	private Boolean hideOutcomeResults;
 	private String purpose;
+
+	@CanvasField(postKey = "id", array = false)
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	@CanvasField(postKey = "rubric_association_id", array = false)
 	public long getAssociationId() {
