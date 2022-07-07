@@ -7,6 +7,7 @@ import edu.ksu.canvas.interfaces.OutcomeGroupWriter;
 import edu.ksu.canvas.model.outcomes.Outcome;
 import edu.ksu.canvas.model.outcomes.OutcomeGroup;
 import edu.ksu.canvas.model.outcomes.OutcomeLink;
+import edu.ksu.canvas.model.outcomes.RootOutcomeGroup;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
 import edu.ksu.canvas.net.auth.AuthorizationToken;
@@ -70,6 +71,24 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
+	public List<OutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInAccount(String accountId) throws IOException {
+		LOG.debug("getting outcome groups from root outcome group in account {}", accountId);
+		String url = buildCanvasUrl("accounts/" + accountId + "/root_outcome_group", Collections.emptyMap());
+		return getListFromCanvas(url);
+	}
+
+	@Override
+	public Optional<RootOutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInCourse(String courseId) throws IOException {
+		LOG.debug("getting outcome groups from root outcome group in course {}", courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/root_outcome_group", Collections.emptyMap());
+		Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
+		if (response.getErrorHappened() || response.getResponseCode() != 200) {
+			return Optional.empty();
+		}
+		return responseParser.parseToObject(RootOutcomeGroup.class, response);
+	}
+
+	@Override
 	public List<OutcomeGroup> getOutcomeGroupsInAccount(String accountId) throws IOException {
 		LOG.debug("Retrieving outcome groups for account {}", accountId);
 		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups", Collections.emptyMap());
@@ -118,7 +137,7 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 		}
 		return responseParser.parseToObject(OutcomeGroup.class, response);
 	}
-	
+
 	@Override
 	public Optional<OutcomeGroup> createSubgroup(String parentOutcomeGroupId, CreateOutcomeGroupOptions options) throws IOException {
 		LOG.debug("creating outcome group as subgroup of {}", parentOutcomeGroupId);

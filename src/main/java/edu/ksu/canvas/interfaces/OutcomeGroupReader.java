@@ -3,6 +3,7 @@ package edu.ksu.canvas.interfaces;
 import edu.ksu.canvas.model.outcomes.Outcome;
 import edu.ksu.canvas.model.outcomes.OutcomeGroup;
 import edu.ksu.canvas.model.outcomes.OutcomeLink;
+import edu.ksu.canvas.model.outcomes.RootOutcomeGroup;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,6 +64,22 @@ public interface OutcomeGroupReader extends CanvasReader<OutcomeGroup, OutcomeGr
 	 */
 	List<OutcomeGroup> getOutcomeGroupsInCourse(String courseId) throws IOException;
 
+	/**
+	 * Retrieve all outcome groups children of the root outcome group for account.
+	 * ONLY MAKES SENSE in PLATIN
+	 * @param accountId The account to look for the outcome groups in.
+	 * @return List of outcome groups of the account
+	 * @throws IOException When there is an error communicating with Canvas	 */
+	List<OutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInAccount(String accountId) throws IOException;
+
+	/**
+	 * Retrieve all outcome groups children of the root outcome group for course
+	 * ONLY MAKES SENSE in PLATIN
+	 * @param courseId The course to look for the outcome groups in.
+	 * @return object with root outcome group and a list of outcome groups of the course
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<RootOutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInCourse(String courseId) throws IOException;
 	/**
 	 * Retrieve an outcome group
 	 * See <a href="https://canvas.instructure.com/doc/api/outcome_groups.html#method.outcome_groups_api.show">Show an outcome group</a>
