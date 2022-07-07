@@ -66,6 +66,14 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
 	}
 
 	@Override
+	public Optional<RubricWriterResponse> updateSingleRubricInCourse(String courseId, String rubricId, RubricCreationRequest rubric) throws IOException {
+		LOG.debug("updating rubric {} in course {}", rubricId, courseId);
+		String url = buildCanvasUrl("courses/" + courseId + "/rubrics/" + rubricId, Collections.emptyMap());
+		Response response = canvasMessenger.putToCanvas(authorizationToken, url, rubric.toPostMap(serializeNulls));
+		return responseParser.parseToObject(RubricWriterResponse.class, response);
+	}
+
+	@Override
 	public Optional<Rubric> deleteRubric(String courseId, String id) throws IOException {
 		LOG.debug("deleting rubric {} in course {}", id, courseId);
 		String url = buildCanvasUrl("courses/" + courseId + "/rubrics/" + id, Collections.emptyMap());

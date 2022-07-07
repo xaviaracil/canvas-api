@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface RubricWriter extends CanvasWriter<Rubric, RubricWriter> {
 	/**
 	 * Creates a new rubric in the course
-	 * See <a href="https://canvas.instructure.com/doc/api/rubrics.html#method.rubric_associations.create">Create a single rubric</a>
+	 * See <a href="https://canvas.instructure.com/doc/api/rubrics.html#method.rubrics.create">Create a single rubric</a>
 	 * in the Canvas docs for details.
 	 * @param courseId the course ID of the course under which to place this rubric
 	 * @param rubric A rubric object containing the information needed to create an rubric in Canvas
@@ -18,6 +18,18 @@ public interface RubricWriter extends CanvasWriter<Rubric, RubricWriter> {
 	 * @throws IOException When there is an error communicating with Canvas
 	 */
 	Optional<RubricWriterResponse> createSingleRubricInCourse(String courseId, RubricCreationRequest rubric) throws IOException;
+
+	/**
+	 * Updates a rubric in the course
+	 * See <a href="https://canvas.instructure.com/doc/api/rubrics.html#method.rubrics.update">Update a single rubric</a>
+	 * in the Canvas docs for details.
+	 * @param courseId the course ID of the course under which to place this rubric
+	 * @param rubricId the rubric ID of the rubric to update
+	 * @param rubric A rubric object containing the information needed to update an rubric in Canvas
+	 * @return a RubricWriterResponse with the updated Rubric and the RubricAssociation
+	 * @throws IOException When there is an error communicating with Canvas
+	 */
+	Optional<RubricWriterResponse> updateSingleRubricInCourse(String courseId, String rubricId, RubricCreationRequest rubric) throws IOException;
 
 	/**
 	 * Delete a single rubric
