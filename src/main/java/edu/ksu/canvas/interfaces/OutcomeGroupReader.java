@@ -70,7 +70,7 @@ public interface OutcomeGroupReader extends CanvasReader<OutcomeGroup, OutcomeGr
 	 * @param accountId The account to look for the outcome groups in.
 	 * @return List of outcome groups of the account
 	 * @throws IOException When there is an error communicating with Canvas	 */
-	List<OutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInAccount(String accountId) throws IOException;
+	Optional<RootOutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInAccount(String accountId) throws IOException;
 
 	/**
 	 * Retrieve all outcome groups children of the root outcome group for course

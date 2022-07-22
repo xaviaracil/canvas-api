@@ -11,6 +11,8 @@ import edu.ksu.canvas.model.outcomes.RootOutcomeGroup;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
 import edu.ksu.canvas.net.auth.AuthorizationToken;
+import edu.ksu.canvas.net.auth.BasicAuthorizationToken;
+import edu.ksu.canvas.oauth.OauthToken;
 import edu.ksu.canvas.requestOptions.CreateOutcomeGroupOptions;
 import edu.ksu.canvas.requestOptions.CreateOutcomeOptions;
 import org.slf4j.Logger;
@@ -71,10 +73,14 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	}
 
 	@Override
-	public List<OutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInAccount(String accountId) throws IOException {
+	public Optional<RootOutcomeGroup> getOutcomeGroupsFromRootOutcomeGroupInAccount(String accountId) throws IOException {
 		LOG.debug("getting outcome groups from root outcome group in account {}", accountId);
 		String url = buildCanvasUrl("accounts/" + accountId + "/root_outcome_group", Collections.emptyMap());
-		return getListFromCanvas(url);
+		Response response = canvasMessenger.getSingleResponseFromCanvas(authorizationToken, url);
+		if (response.getErrorHappened() || response.getResponseCode() != 200) {
+			return Optional.empty();
+		}
+		return responseParser.parseToObject(RootOutcomeGroup.class, response);
 	}
 
 	@Override
@@ -150,6 +156,10 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	public Optional<OutcomeGroup> createSubgroupInAccount(String accountId, String parentOutcomeGroupId, CreateOutcomeGroupOptions options) throws IOException {
 		LOG.debug("creating outcome group in account {} as subgroup of {}", accountId, parentOutcomeGroupId);
 		String url = buildCanvasUrl("accounts/" + accountId + "/outcome_groups/" + parentOutcomeGroupId + "/subgroups", Collections.emptyMap());
+		if (authorizationToken instanceof BasicAuthorizationToken) {
+			Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, options.getJson());
+			return responseParser.parseToObject(OutcomeGroup.class, response);
+		}
 		Response response = canvasMessenger.sendToCanvas(authorizationToken, url, options.getOptionsMap());
 		return responseParser.parseToObject(OutcomeGroup.class, response);
 	}
@@ -158,6 +168,10 @@ public class OutcomeGroupImpl extends BaseImpl<OutcomeGroup, OutcomeGroupReader,
 	public Optional<OutcomeGroup> createSubgroupInCourse(String courseId, String parentOutcomeGroupId, CreateOutcomeGroupOptions options) throws IOException {
 		LOG.debug("creating outcome group in course {} as subgroup of {}", courseId, parentOutcomeGroupId);
 		String url = buildCanvasUrl("courses/" + courseId + "/outcome_groups/" + parentOutcomeGroupId + "/subgroups", Collections.emptyMap());
+		if (authorizationToken instanceof BasicAuthorizationToken) {
+			Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, options.getJson());
+			return responseParser.parseToObject(OutcomeGroup.class, response);
+		}
 		Response response = canvasMessenger.sendToCanvas(authorizationToken, url, options.getOptionsMap());
 		return responseParser.parseToObject(OutcomeGroup.class, response);
 	}
