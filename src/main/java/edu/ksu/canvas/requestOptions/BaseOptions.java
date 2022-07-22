@@ -1,5 +1,7 @@
 package edu.ksu.canvas.requestOptions;
 
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +15,17 @@ public abstract class BaseOptions {
 
     public Map<String, List<String>> getOptionsMap() {
         return optionsMap;
+    }
+
+    public JsonObject getJson() {
+        JsonObject jsonObject = new JsonObject();
+        optionsMap.entrySet().stream().forEach(stringListEntry -> {
+            List<String> value = stringListEntry.getValue();
+            if (value.size() == 1) {
+                jsonObject.addProperty(stringListEntry.getKey(), value.get(0));
+            }
+        });
+        return jsonObject;
     }
 
     /**

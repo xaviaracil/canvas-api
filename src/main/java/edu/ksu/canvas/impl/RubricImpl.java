@@ -1,14 +1,17 @@
 package edu.ksu.canvas.impl;
 
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import edu.ksu.canvas.interfaces.RubricReader;
 import edu.ksu.canvas.interfaces.RubricWriter;
 import edu.ksu.canvas.model.assignment.Rubric;
 import edu.ksu.canvas.model.assignment.RubricWriterResponse;
+import edu.ksu.canvas.model.rubric.RubricCreationJSONRequest;
 import edu.ksu.canvas.model.rubric.RubricCreationRequest;
 import edu.ksu.canvas.net.Response;
 import edu.ksu.canvas.net.RestClient;
 import edu.ksu.canvas.net.auth.AuthorizationToken;
+import edu.ksu.canvas.net.auth.BasicAuthorizationToken;
 import edu.ksu.canvas.requestOptions.GetRubricOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,6 +64,12 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
 	public Optional<RubricWriterResponse> createSingleRubricInCourse(String courseId, RubricCreationRequest rubric) throws IOException {
 		LOG.debug("creating rubric in course {}", courseId);
 		String url = buildCanvasUrl("courses/" + courseId + "/rubrics", Collections.emptyMap());
+        if (authorizationToken instanceof BasicAuthorizationToken) {
+            RubricCreationJSONRequest rubricCreationJSONRequest = new RubricCreationJSONRequest(rubric);
+            JsonObject jsonObject = rubricCreationJSONRequest.toJsonObject(serializeNulls);
+            Response response = canvasMessenger.sendJsonPostToCanvas(authorizationToken, url, jsonObject.getAsJsonObject("rubric"));
+            return responseParser.parseToObject(RubricWriterResponse.class, response);
+        }
 		Response response = canvasMessenger.sendToCanvas(authorizationToken, url, rubric.toPostMap(serializeNulls));
 		return responseParser.parseToObject(RubricWriterResponse.class, response);
 	}
@@ -69,6 +78,12 @@ public class RubricImpl extends BaseImpl<Rubric, RubricReader, RubricWriter> imp
 	public Optional<RubricWriterResponse> updateSingleRubricInCourse(String courseId, String rubricId, RubricCreationRequest rubric) throws IOException {
 		LOG.debug("updating rubric {} in course {}", rubricId, courseId);
 		String url = buildCanvasUrl("courses/" + courseId + "/rubrics/" + rubricId, Collections.emptyMap());
+        if (authorizationToken instanceof BasicAuthorizationToken) {
+            RubricCreationJSONRequest rubricCreationJSONRequest = new RubricCreationJSONRequest(rubric);
+            JsonObject jsonObject = rubricCreationJSONRequest.toJsonObject(serializeNulls);
+            Response response = canvasMessenger.sendJsonPutToCanvas(authorizationToken, url, jsonObject.getAsJsonObject("rubric"));
+            return responseParser.parseToObject(RubricWriterResponse.class, response);
+        }
 		Response response = canvasMessenger.putToCanvas(authorizationToken, url, rubric.toPostMap(serializeNulls));
 		return responseParser.parseToObject(RubricWriterResponse.class, response);
 	}
