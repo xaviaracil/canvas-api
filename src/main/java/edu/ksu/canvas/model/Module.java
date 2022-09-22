@@ -19,6 +19,7 @@ public class Module extends BaseCanvasModel implements Serializable {
     private Boolean published;
     private Long itemsCount;
     private String itemsUrl;
+    private List<Item> items;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -118,5 +119,13 @@ public class Module extends BaseCanvasModel implements Serializable {
 
     public void setItemsUrl(final String itemsUrl) {
         this.itemsUrl = itemsUrl;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 }

@@ -11,7 +11,12 @@ public class ListModulesOptions extends BaseOptions {
 
     public enum Include {
         ITEMS,
-        CONTENT_DETAILS
+        CONTENT_DETAILS;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 
     private Long courseId;
